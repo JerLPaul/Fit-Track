@@ -1,0 +1,17 @@
+FROM node:slime
+
+RUN npm i npm@latest -g
+
+COPY package.json package.json
+COPY package-lock.json package-lock.json
+
+# clean install dependencies
+RUN npm ci
+
+# environment variables
+ENV CI = true
+ENV PORT: 3000
+
+COPY . .
+
+CMD ["npm", "run", "dev"]

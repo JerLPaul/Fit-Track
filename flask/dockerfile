@@ -1,0 +1,12 @@
+FROM python:slim
+
+WORKDIR /app
+ADD . /app
+
+# Install Flask
+RUN pip install flask
+
+ENV PYTHONPATH="${PYTHONPATH}:."
+
+
+CMD [ "python", "scraper.py" ]

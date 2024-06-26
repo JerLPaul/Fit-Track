@@ -1,0 +1,7 @@
+FROM postgres:slim
+
+
+RUN mkdir -p /docker-entrypoint-initdb.d
+
+# run the sql files on init
+COPY . /docker-entrypoint-initdb.d/
