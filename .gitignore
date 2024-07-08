@@ -28,3 +28,6 @@ react/.env.local
 react/.env.development.local
 react/.env.test.local
 react/.env.production.local
+
+# pycache
+**/__pycache__/
