@@ -1,15 +1,12 @@
-import flask
+from flask import Flask
 import os
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
-@app.route('/api/food-calories', methods=['POST'])
-def food_calories_post():
-    food = flask.request.json['food']
-    # Call the external API
+@app.route('/')
+def index():
+    return '<h1>Hello, World!</h1>'
 
-@app.route('/api/auth', methods=['POST'])
-def auth_post():
-    username = flask.request.json['username']
-    password = flask.request.json['password']
-    # Get from DB or from firebase
+
+if __name__ == '__main__':
+    app.run(debug=True)
