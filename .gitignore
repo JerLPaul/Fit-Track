@@ -1,1 +1,30 @@
 .vscode
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+react/node_modules
+react/.pnp
+react/.pnp.js
+
+# testing
+react/coverage
+
+# next.js
+react/.next/
+react/out/
+
+# production
+react/build
+
+# misc
+react/.DS_Store
+
+# debug
+react/npm-debug.log*
+
+# local env files
+react/.env.local
+react/.env.development.local
+react/.env.test.local
+react/.env.production.local
