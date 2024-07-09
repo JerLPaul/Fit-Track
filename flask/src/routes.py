@@ -19,7 +19,7 @@ class UsersList(Resource):
     @marshal_with(user_fields)
     def get(self):
         users = Users.query.all()
-        return users, 200
+        return users
 
 class User(Resource):
     @marshal_with(user_fields)
