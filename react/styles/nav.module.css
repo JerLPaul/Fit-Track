@@ -1,0 +1,25 @@
+
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: #7bacdc;
+    min-width: 100vw;
+}
+  
+.navlist {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    list-style: none;
+}
+
+.navitem {
+    margin-right: 1rem;
+}
+
+.navitem:hover {
+    cursor: pointer;
+    background-color: #8ab4de;
+    border-radius: 30px;
+}
