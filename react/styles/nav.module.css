@@ -2,9 +2,8 @@
 .navbar {
     display: flex;
     align-items: center;
-    padding: 1rem;
-    background-color: #7bacdc;
-    min-width: 100vw;
+    background-color: #6a9cce;
+    min-width: 99vw;
 }
   
 .navlist {
@@ -16,10 +15,12 @@
 
 .navitem {
     margin-right: 1rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
 }
 
 .navitem:hover {
     cursor: pointer;
     background-color: #8ab4de;
-    border-radius: 30px;
+    border-radius: 5px;
+    transition: background-color 0.5s;
 }

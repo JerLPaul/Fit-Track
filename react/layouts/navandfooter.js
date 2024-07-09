@@ -5,7 +5,7 @@ export default function NavAndFooter({ children }) {
   return (
     <div>
         <Head>
-            <title>My Site</title>
+            <title>Fit-Track</title>
             <link rel="icon" href="/favicon.ico" />
         </Head>
 
@@ -15,6 +15,7 @@ export default function NavAndFooter({ children }) {
                     <li className={styles.navitem}> <a href="/">Home</a></li>
                     <li className={styles.navitem}> <a href="/">About</a></li>
                     <li className={styles.navitem}> <a href="/">Login</a></li>
+                    <li className={styles.navitem}> </li>
                     
                 </ul>
             </nav>

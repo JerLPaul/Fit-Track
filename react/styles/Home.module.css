@@ -84,6 +84,22 @@
   height: 1em;
 }
 
+.searchBar {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #eaeaea;
+  width: 80%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+}
+
+.searchBar:focus {
+  border: 1px solid #eaeaea;
+}
+
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;
