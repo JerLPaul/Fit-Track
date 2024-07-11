@@ -1,7 +1,7 @@
 from ast import arg
 from flask import Flask, render_template, request, redirect, url_for
 from flask_restx import Resource, fields, reqparse, abort
-from src import app, ns, db
+from src import app, api, db
 from src.models import Users
 
 
@@ -10,30 +10,37 @@ user_args.add_argument("username", type=str, help="Username is required", requir
 user_args.add_argument("email", type=str, help="Email is required", required=True)
 user_args.add_argument("password", type=str, help="Password is required", required=True)
 
-user_fields = ns.model('User', {
+nutrition_args = reqparse.RequestParser()
+# Continue with the code below
+
+user_ns = api.namespace('users', description='User operations')
+nutrition_ns = api.namespace('nutrition', description='Nutrition API operations')
+
+
+user_fields = user_ns.model('User', {
     'username': fields.String(required=True, description='The user username'),
     'email': fields.String(required=True, description='The user email'),
     'password': fields.String(required=True, description='The user password')
     }
 )
 
-arg_model = ns.model('args', {
+arg_model = user_ns.model('args', {
     'username': fields.String(required=True, description='The user username'),
     'email': fields.String(required=True, description='The user email'),
     'password': fields.String(required=True, description='The user password')
     }
 )
 
-@ns.route('/')
+@user_ns.route('/')
 class UsersList(Resource):
-    @ns.marshal_list_with(user_fields)
+    @user_ns.marshal_list_with(user_fields)
     def get(self):
         """List all users"""
         users = Users.query.all()
         return users
     
-    @ns.expect(arg_model)
-    @ns.marshal_with(user_fields)
+    @user_ns.expect(arg_model)
+    @user_ns.marshal_with(user_fields)
     def post(self):
         """Create a new user"""
         args = user_args.parse_args()
@@ -45,8 +52,8 @@ class UsersList(Resource):
         db.session.commit()
         return user, 201
     
-    @ns.expect(arg_model)
-    @ns.marshal_with(user_fields)
+    @user_ns.expect(arg_model)
+    @user_ns.marshal_with(user_fields)
     def put(self):
         """Update a user by email"""
         args = user_args.parse_args()
@@ -59,8 +66,8 @@ class UsersList(Resource):
         db.session.commit()
         return user, 200
     
-    @ns.expect(arg_model)
-    @ns.marshal_with(user_fields)
+    @user_ns.expect(arg_model)
+    @user_ns.marshal_with(user_fields)
     def delete(self):
         """Delete a user by email"""
         args = user_args.parse_args()
@@ -72,10 +79,10 @@ class UsersList(Resource):
         return '', 204
     
 
-@ns.route('/<int:user_id>')
-@ns.response(404, 'User not found')
+@user_ns.route('/<int:user_id>')
+@user_ns.response(404, 'User not found')
 class User(Resource):
-    @ns.marshal_with(user_fields)
+    @user_ns.marshal_with(user_fields)
     def get(self, user_id):
         """Get a user by ID"""
         user = Users.query.filter_by(id=user_id).first()
@@ -83,8 +90,8 @@ class User(Resource):
             abort(404, message="User not found")
         return user, 200
 
-    @ns.expect(arg_model)
-    @ns.marshal_with(user_fields)
+    @user_ns.expect(arg_model)
+    @user_ns.marshal_with(user_fields)
     def put(self, user_id):
         """Update a user by ID"""
         args = user_args.parse_args()
@@ -105,6 +112,13 @@ class User(Resource):
         db.session.delete(user)
         db.session.commit()
         return '', 204
+    
+
+@nutrition_ns.route('/')
+class Nutrition(Resource):
+# Add API calls to get nutrition facts
+    def get(self):
+        return {'calories': 100, 'fat': 10, 'carbs': 20, 'protein': 30}
     
 
 @app.route('/')

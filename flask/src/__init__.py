@@ -15,6 +15,4 @@ api = Api(app, version='1.0', title='User API',
 
 db = SQLAlchemy(app)
 
-ns = api.namespace('users', description='User operations')
-
 from src import routes
