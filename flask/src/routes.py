@@ -76,7 +76,7 @@ class UsersList(Resource):
             abort(404, message="User not found")
         db.session.delete(user)
         db.session.commit()
-        return '', 204
+        return 'Account deleted successfully', 204
     
 
 @user_ns.route('/<int:user_id>')
