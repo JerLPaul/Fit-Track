@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_restx import Resource, fields, reqparse, abort
 from src import app, api, db
 from src.models import Users
+from flask import request
+import requests, os
 
 
 user_args = reqparse.RequestParser()
@@ -12,6 +14,8 @@ user_args.add_argument("password", type=str, help="Password is required", requir
 
 nutrition_args = reqparse.RequestParser()
 # Continue with the code below
+nutrition_args.add_argument("name", type=str, help="Name is required", required=True)
+
 
 user_ns = api.namespace('users', description='User operations')
 nutrition_ns = api.namespace('nutrition', description='Nutrition API operations')
@@ -116,10 +120,28 @@ class User(Resource):
 
 @nutrition_ns.route('/')
 class Nutrition(Resource):
-# Add API calls to get nutrition facts
-    def get(self):
-        return {'calories': 100, 'fat': 10, 'carbs': 20, 'protein': 30}
-    
+    @nutrition_ns.expect(nutrition_args)
+    @nutrition_ns.marshal_with(nutrition_args)
+    def post(self):
+        """Call the API to get nutrition facts"""
+
+        # Authenticate body to ensure need of API
+
+        # Continue with your code to create a new nutrition entry
+        args = nutrition_args.parse_args()
+
+        # Create the request headers with the authorization header
+        headers = {'Authorization': os.environ.get('API_KEY')}
+
+        # Make the POST request to the desired URL with the input data in the body
+        response = requests.post('https://example.com/api/nutrition', json=args, headers=headers)
+
+        # Check the response status code
+        if response.status_code == 201:
+            return response.json(), 201
+        else:
+            abort(response.status_code, message=response.json())
+
 
 @app.route('/')
 def index():
