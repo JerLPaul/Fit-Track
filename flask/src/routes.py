@@ -1,10 +1,12 @@
 from ast import arg
+import token
 from flask import Flask, render_template, request, redirect, url_for
 from flask_restx import Resource, fields, reqparse, abort
 from src import app, api, db
 from src.models import Users
 from flask import request
 import requests, os
+from rauth.service import OAuth2Service
 
 
 user_args = reqparse.RequestParser()
@@ -13,9 +15,7 @@ user_args.add_argument("email", type=str, help="Email is required", required=Tru
 user_args.add_argument("password", type=str, help="Password is required", required=True)
 
 nutrition_args = reqparse.RequestParser()
-# Continue with the code below
-nutrition_args.add_argument("name", type=str, help="Name is required", required=True)
-
+nutrition_args.add_argument("name", type=str, help="Food name is required", required=True)
 
 user_ns = api.namespace('users', description='User operations')
 nutrition_ns = api.namespace('nutrition', description='Nutrition API operations')
@@ -32,6 +32,11 @@ arg_model = user_ns.model('args', {
     'username': fields.String(required=True, description='The user username'),
     'email': fields.String(required=True, description='The user email'),
     'password': fields.String(required=True, description='The user password')
+    }
+)
+
+nutrition_model = nutrition_ns.model('Nutrition', {
+    'name': fields.String(required=True, description='The food name')
     }
 )
 
@@ -117,31 +122,49 @@ class User(Resource):
         db.session.commit()
         return '', 204
     
+consumer_key = os.environ.get('API_KEY')
+consumer_secret = os.environ.get('API_SECRET')
+
+def get_auth_token():
+        """Geth the Authentification token"""
+        token_url = "https://oauth.fatsecret.com/connect/token"
+        response = requests.post(token_url, data= {
+            'client_id': consumer_key,
+            'client_secret': consumer_secret,
+            'grant_type': 'client_credentials',
+        })
+
+        if response.status_code == 200:
+            return response.json()['access_token']
+        
+auth_token = get_auth_token()
 
 @nutrition_ns.route('/')
+@nutrition_ns.response(404, 'Nutrition not found')
 class Nutrition(Resource):
-    @nutrition_ns.expect(nutrition_args)
-    @nutrition_ns.marshal_with(nutrition_args)
+    @nutrition_ns.expect(nutrition_model)
+    @nutrition_ns.marshal_with(nutrition_model)
     def post(self):
         """Call the API to get nutrition facts"""
-
-        # Authenticate body to ensure need of API
-
-        # Continue with your code to create a new nutrition entry
+        
         args = nutrition_args.parse_args()
+        search_url = "https://platform.fatsecret.com/rest/server.api"
+        headers = {
+            'Authorization': f'Bearer {auth_token}'
+        }
+        params = {
+            'method': 'food.search',
+            'search_expression': args['name'],
+            'format': 'json',
+        }
 
-        # Create the request headers with the authorization header
-        headers = {'Authorization': os.environ.get('API_KEY')}
+        response = requests.get(search_url, headers=headers, params=params)
 
-        # Make the POST request to the desired URL with the input data in the body
-        response = requests.post('https://example.com/api/nutrition', json=args, headers=headers)
-
-        # Check the response status code
-        if response.status_code == 201:
-            return response.json(), 201
+        if response.status_code == 200:
+            print(response.json())
+            return response.json()
         else:
             abort(response.status_code, message=response.json())
-
 
 @app.route('/')
 def index():
