@@ -6,7 +6,6 @@ from src import app, api, db
 from src.models import Users
 from flask import request
 import requests, os
-from rauth.service import OAuth2Service
 
 
 user_args = reqparse.RequestParser()
@@ -136,7 +135,6 @@ auth_token = get_auth_token()
 @nutrition_ns.response(404, 'Nutrition not found')
 class Nutrition(Resource):
     @nutrition_ns.expect(nutrition_model)
-    @nutrition_ns.marshal_with(nutrition_model)
     def post(self):
         """Call the API to get nutrition facts"""
         
@@ -146,7 +144,7 @@ class Nutrition(Resource):
             'Authorization': f'Bearer {auth_token}'
         }
         params = {
-            'method': 'food.search',
+            'method': 'foods.search',
             'search_expression': args['name'],
             'format': 'json',
         }
