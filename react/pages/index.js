@@ -1,7 +1,15 @@
+import { useState } from 'react';
 import styles from '../styles/Home.module.css';
 import Layout from '../layouts/navandfooter';
+import SearchList from '../components/SearchList/SearchList';
 
 export default function Home() {
+  const [ input, setInput ] = useState('');
+
+  const handleChange = (e) => {
+    setInput(e.target.value);
+  }
+
   return (
     <div>
     <Layout>
@@ -14,7 +22,11 @@ export default function Home() {
             Track your nutrition and fitness goals
           </p>
 
-          <input type="text" className={styles.searchBar} placeholder="Search..." />
+          <div>
+            <input type="text" className={styles.searchBar} placeholder="Search..." value={input} onChange={handleChange}/>
+            <SearchList input={input}/>
+          </div>
+
           
         </div>
     </Layout>
