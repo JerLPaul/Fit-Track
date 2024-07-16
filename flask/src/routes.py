@@ -28,13 +28,6 @@ user_fields = user_ns.model('User', {
     }
 )
 
-arg_model = user_ns.model('args', {
-    'username': fields.String(required=True, description='The user username'),
-    'email': fields.String(required=True, description='The user email'),
-    'password': fields.String(required=True, description='The user password')
-    }
-)
-
 nutrition_model = nutrition_ns.model('Nutrition', {
     'name': fields.String(required=True, description='The food name')
     }
@@ -48,7 +41,7 @@ class UsersList(Resource):
         users = Users.query.all()
         return users
     
-    @user_ns.expect(arg_model)
+    @user_ns.expect(user_fields)
     @user_ns.marshal_with(user_fields)
     def post(self):
         """Create a new user"""
@@ -61,7 +54,7 @@ class UsersList(Resource):
         db.session.commit()
         return user, 201
     
-    @user_ns.expect(arg_model)
+    @user_ns.expect(user_fields)
     @user_ns.marshal_with(user_fields)
     def put(self):
         """Update a user by email"""
@@ -75,7 +68,7 @@ class UsersList(Resource):
         db.session.commit()
         return user, 200
     
-    @user_ns.expect(arg_model)
+    @user_ns.expect(user_fields)
     @user_ns.marshal_with(user_fields)
     def delete(self):
         """Delete a user by email"""
@@ -99,7 +92,7 @@ class User(Resource):
             abort(404, message="User not found")
         return user, 200
 
-    @user_ns.expect(arg_model)
+    @user_ns.expect(user_fields)
     @user_ns.marshal_with(user_fields)
     def put(self, user_id):
         """Update a user by ID"""
