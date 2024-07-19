@@ -6,21 +6,23 @@ export default function SearchList(props) {
     const [suggestions, setSuggestions] = useState([]);
 
     const getSuggestions = async () => {
-        const res = await fetch(`http://127.0.0.1:5000/nutrition/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: props.input }),
-        }).then((res) => {
-            res.json();
-        }).then((data) => {
+        try {
+            const res = await fetch(`api/nutrition/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: props.input }),
+            });
+            const data = await res.json(); // Make sure to await the parsing of the JSON
             const items = data?.foods?.food?.map((item) => ({
                 name: item.food_name,
                 description: item.food_description,
             })) ?? [];
-            setSuggestions(items);            
-        })
+            setSuggestions(items);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
                 
     }
 
