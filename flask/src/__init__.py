@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from dotenv import load_dotenv, find_dotenv
 import os
 
@@ -12,6 +13,8 @@ api = Api(app, version='1.0', title='User API',
           description='A simple User API',
           doc='/api/docs'
         )
+allowed_origins = os.getenv('ALLOWED_ORIGINS').split()
+CORS(app, resources={r"*": {"origins": allowed_origins}})
 
 db = SQLAlchemy(app)
 

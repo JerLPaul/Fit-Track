@@ -1,9 +1,7 @@
 from ast import arg
-from flask import Flask, render_template, request, redirect, url_for
 from flask_restx import Resource, fields, reqparse, abort
 from src import app, api, db
 from src.models import Users
-from flask import request
 import requests, os
 
 
@@ -136,7 +134,6 @@ class Nutrition(Resource):
     @nutrition_ns.expect(nutrition_model)
     def post(self):
         """Call the API to get nutrition facts"""
-        
         args = nutrition_args.parse_args()
         search_url = "https://platform.fatsecret.com/rest/server.api"
         headers = {
@@ -151,6 +148,7 @@ class Nutrition(Resource):
         response = requests.get(search_url, headers=headers, params=params)
 
         if response.status_code == 200:
+            print(response.json())
             return response.json()
         else:
             abort(response.status_code, message=response.json())

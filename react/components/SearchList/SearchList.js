@@ -6,35 +6,22 @@ export default function SearchList(props) {
     const [suggestions, setSuggestions] = useState([]);
 
     const getSuggestions = async () => {
-        try {
-            const response = await fetch(`https://fit-track-backend.onrender.com/nutrition/`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: props.input,
-                    }),
-                }
-            );
-            
-            if (!response.ok) {
-                throw new Error(response.statusText || "An error occurred while fetching the data.");
-            }
-
-            const data = await response.json();
-                
-            const items = data.foods.food.map((item) => ({
+        const res = await fetch(`http://127.0.0.1:5000/nutrition/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: props.input }),
+        }).then((res) => {
+            res.json();
+        }).then((data) => {
+            const items = data?.foods?.food?.map((item) => ({
                 name: item.food_name,
                 description: item.food_description,
-            }));
-            setSuggestions(items);
+            })) ?? [];
+            setSuggestions(items);            
+        })
                 
-        } catch (error) {
-            console.error('Failed to fetch data: ', error);
-            return [];
-        }
     }
 
     useEffect(() => {
