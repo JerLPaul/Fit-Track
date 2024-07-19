@@ -148,7 +148,6 @@ class Nutrition(Resource):
         response = requests.get(search_url, headers=headers, params=params)
 
         if response.status_code == 200:
-            print(response.json())
             return response.json()
         else:
             abort(response.status_code, message=response.json())
