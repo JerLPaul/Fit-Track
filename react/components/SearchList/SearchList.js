@@ -18,6 +18,7 @@ export default function SearchList(props) {
             const items = data?.foods?.food?.map((item) => ({
                 name: item.food_name,
                 description: item.food_description,
+                url: item.food_url
             })) ?? [];
             setSuggestions(items);
         } catch (error) {
@@ -33,7 +34,7 @@ export default function SearchList(props) {
     return (
         <div className={style.searchList}>
             {suggestions.map((item, index) => (
-                <SearchItem key={index} name={item.name} description={item.description} />
+                <SearchItem key={index} name={item.name} description={item.description} ulr={item.url}/>
             ))}
         </div>
     );
@@ -49,8 +50,7 @@ function SearchItem(props) {
 
     return (
         <div className={style.searchItem} onClick={handleClick}>
-            <p>{props.name}</p>
-
+            <h3>{props.name}</h3>
             {selected ? <p className={style.description}>{props.description}</p> : null}
             
         </div>
