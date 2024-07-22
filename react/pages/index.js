@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from '../styles/Home.module.css';
-import Layout from '../layouts/navandfooter';
+import Layout from '../layouts/Default';
 import SearchList from '../components/SearchList/SearchList';
 
 export default function Home() {

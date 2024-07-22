@@ -30,6 +30,8 @@ body {
     Droid Sans,
     Helvetica Neue,
     sans-serif;
+
+    min-width: 99vw;
 }
 
 a {
