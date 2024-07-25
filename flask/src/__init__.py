@@ -13,8 +13,7 @@ api = Api(app, version='1.0', title='User API',
           description='A simple User API',
           doc='/api/docs'
         )
-allowed_origins = os.getenv('ALLOWED_ORIGINS').split()
-CORS(app, resources={r"*": {"origins": allowed_origins}})
+CORS(app, resources={r"*": {"origins": "*"}})
 
 db = SQLAlchemy(app)
 
