@@ -8,14 +8,20 @@ export default function LoginPopup() {
     }
     return (
         <div className={styles.container}>
-            <h1>Login</h1>
-            <form className={styles.container}>
-                <label for="email">Email:</label>
-                <input type="text" id="email" name="email" />
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" />
+            <form className={styles.form}>
+                <h1>Login</h1>
+                <FormItem id="email" label="Email" type="text"/>
+                <FormItem id="password" label="Password" type="password"/>
                 <button type="submit">Login</button>
             </form>
+        </div>
+    )
+}
+
+function FormItem(props) {
+    return (
+        <div className={styles.formItem}>
+            <input type={props.type} id={props.id} name={props.id} placeholder={props.label}/>
         </div>
     )
 }

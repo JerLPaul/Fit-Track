@@ -1,6 +1,21 @@
 .container {
-  padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: center;
+  margin: 10% 5% 10% 5%;
+  gap: 1rem;
+}
+
+.formItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
 }

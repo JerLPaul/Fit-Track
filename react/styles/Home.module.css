@@ -3,8 +3,7 @@
   padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin: 20vh auto auto auto;
 }
 
 .title a {
@@ -89,10 +88,16 @@
   padding: 1rem;
   border-radius: 10px;
   border: 1px solid #eaeaea;
-  width: 80%;
+  width: 100%;
   max-width: 800px;
+}
+
+.searchContainer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .searchBar:focus {

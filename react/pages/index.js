@@ -22,7 +22,7 @@ export default function Home() {
             Track your nutrition and fitness goals
           </p>
 
-          <div>
+          <div className={styles.searchContainer}>
             <input type="text" className={styles.searchBar} placeholder="Search..." value={input} onChange={handleChange}/>
             <SearchList input={input}/>
           </div>
