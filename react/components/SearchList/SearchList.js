@@ -36,7 +36,7 @@ export default function SearchList(props) {
     return (
         <div className={style.searchList}>
             {suggestions.map((item, index) => (
-                <SearchItem key={index} name={item.name} description={item.description} ulr={item.url}/>
+                <SearchItem key={index} name={item.name} description={item.description} url={item.url}/>
             ))}
         </div>
     );
