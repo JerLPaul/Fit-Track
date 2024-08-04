@@ -10,12 +10,17 @@ user_args.add_argument("username", type=str, help="Username is required", requir
 user_args.add_argument("email", type=str, help="Email is required", required=True)
 user_args.add_argument("password", type=str, help="Password is required", required=True)
 
+auth_args = reqparse.RequestParser()
+auth_args.add_argument("username", type=str, help="username or email", required=False)
+auth_args.add_argument("email", type=str, help="username or email", required=False)
+auth_args.add_argument("password", type=str, help="password of the user", required=True)
+
 nutrition_args = reqparse.RequestParser()
 nutrition_args.add_argument("name", type=str, help="Food name is required", required=True)
 
 user_ns = api.namespace('users', description='User operations')
 nutrition_ns = api.namespace('nutrition', description='Nutrition API operations')
-
+auth_ns = api.namespace('auth', description="authentication options")
 
 user_fields = user_ns.model('User', {
     'username': fields.String(required=True, description='The user username'),
@@ -26,6 +31,13 @@ user_fields = user_ns.model('User', {
 
 nutrition_model = nutrition_ns.model('Nutrition', {
     'name': fields.String(required=True, description='The food name')
+    }
+)
+
+auth_model = nutrition_ns.model('Login', {
+    'username': fields.String(required=False, description='The user username'),
+    'email': fields.String(required=False, description='The user email'),
+    'password': fields.String(required=True, description='The user password')
     }
 )
 
@@ -151,6 +163,46 @@ class Nutrition(Resource):
             return response.json()
         else:
             abort(response.status_code, message=response.json())
+
+
+
+@auth_ns.route("/")
+class Auth(Resource):
+    @auth_ns.expect(auth_model)
+    def get(self):
+        args = auth_args.parse_args()
+
+        user = None
+        if args["email"] is not None:
+            user = Users.query.filter_by(email=args["email"])
+        elif args["username"] is not None:
+            user = Users.query.filter_by(username=args["username"])
+
+        if user is None:
+            abort(404, "User Not Found")
+
+        if user.password != args["password"]:
+            abort(409, "Login Incorrect")
+        else:
+            return user, 200
+        
+    def post(self):
+        args = auth_args.parse_args()
+
+        user_email = None
+        user_username = None
+        if args["email"] is not None:
+            user_email = Users.query.filter_by(email=args["email"])
+        elif args["username"] is not None:
+            user_username = Users.query.filter_by(username=args["username"])
+
+
+        if user_email or user_username:
+            abort(409, message="User already exists")
+        user = Users(username=args["username"], email=args["email"], password=args["password"])
+        db.session.add(user)
+        db.session.commit()
+        return user, 201
 
 @app.route('/')
 def index():
