@@ -165,18 +165,18 @@ class Nutrition(Resource):
             abort(response.status_code, message=response.json())
 
 
-
-@auth_ns.route("/")
-class Auth(Resource):
+@auth_ns.route("/register")
+class Login(Resource): 
     @auth_ns.expect(auth_model)
-    def get(self):
+    def post(self):
         args = auth_args.parse_args()
 
         user = None
+        print(args["email"])
         if args["email"] is not None:
-            user = Users.query.filter_by(email=args["email"])
+            user = Users.query.filter_by(email=args["email"]).first()
         elif args["username"] is not None:
-            user = Users.query.filter_by(username=args["username"])
+            user = Users.query.filter_by(username=args["username"]).first()
 
         if user is None:
             abort(404, "User Not Found")
@@ -186,6 +186,10 @@ class Auth(Resource):
         else:
             return user, 200
         
+
+@auth_ns.route("/login")
+class Register(Resource):
+    @auth_ns.expect(auth_model)
     def post(self):
         args = auth_args.parse_args()
 
@@ -194,12 +198,16 @@ class Auth(Resource):
         if args["email"] is not None:
             user_email = Users.query.filter_by(email=args["email"])
         elif args["username"] is not None:
-            user_username = Users.query.filter_by(username=args["username"])
+            user_username = Users.query.filter_by(username=args["username"]).first()
 
 
-        if user_email or user_username:
+        if not user_email:
+            user = Users(username="", email=args["email"], password=args["password"])
+        elif not user_username:
+            user = Users(username=args["username"], email="", password=args["password"])
+        else:
             abort(409, message="User already exists")
-        user = Users(username=args["username"], email=args["email"], password=args["password"])
+
         db.session.add(user)
         db.session.commit()
         return user, 201
