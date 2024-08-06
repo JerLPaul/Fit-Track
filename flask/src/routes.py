@@ -165,7 +165,7 @@ class Nutrition(Resource):
             abort(response.status_code, message=response.json())
 
 
-@auth_ns.route("/register")
+@auth_ns.route("/login")
 class Login(Resource): 
     @auth_ns.expect(auth_model)
     def post(self):
@@ -187,7 +187,7 @@ class Login(Resource):
             return user, 200
         
 
-@auth_ns.route("/login")
+@auth_ns.route("/register")
 class Register(Resource):
     @auth_ns.expect(auth_model)
     def post(self):
@@ -202,9 +202,9 @@ class Register(Resource):
 
 
         if not user_email:
-            user = Users(username="", email=args["email"], password=args["password"])
+            user = Users(username=args["username"], password=args["password"])
         elif not user_username:
-            user = Users(username=args["username"], email="", password=args["password"])
+            user = Users(email=args["email"], password=args["password"])
         else:
             abort(409, message="User already exists")
 
