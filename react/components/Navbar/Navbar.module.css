@@ -2,8 +2,19 @@
 .navbar {
     display: flex;
     align-items: center;
-    background-color: #6a9cce;
+    background-color: #252525;
+    border-bottom: 1px solid #d2d2d2;
     min-width: 99vw;
+}
+
+@media (max-width: 680px) {
+    .navbar {
+        flex-direction: column;
+    }
+
+    .navlist > :first-child {
+        display: none;
+    }
 }
   
 .navlist {
