@@ -50,14 +50,30 @@ function SearchItem(props) {
         setSelected(!selected);
     }
 
+
+    // get the values of protein, carbs and fat from the description
     const data = props.description.match(/: \d+(\.\d+)?g/g);
     const pieValues = data.map((item) => parseFloat(item.slice(2, -1)));
+
+    const description = props.description.replace(/( - | \| )/g, '\n').split('\n');
+
 
 
     return (
         <div className={style.searchItem} onClick={handleClick}>
-            <h3>{props.name}</h3>
-            {selected ? <p className={style.description}>{props.description}</p> : null }
+            <div className={style.infoContainer}>
+                <h3>{props.name}</h3>
+                <div className={style.stats}>
+                    {
+                        selected ? 
+                            description.map((item, index) => (
+                                <p key={index}>{item}</p>
+                            ))
+                            : null
+                    }
+                </div>
+            </div>
+            
             {
                 selected ? 
                 <div className={style.chart}>
