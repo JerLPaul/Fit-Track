@@ -5,6 +5,22 @@
   justify-content: center;
 }
 
+.overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100px + 25vw);
+  border-radius: 26px;
+  box-shadow:  24px 24px 48px #202020,
+              -24px -24px 48px #383838;
+}
+
+@media (max-width: 800px) {
+  .overlay {
+    width: 100%;
+  }
+} 
+
 .form {
   display: flex;
   flex-direction: column;
