@@ -28,12 +28,14 @@ export default function LoginPopup() {
     }
     return (
         <div className={styles.container}>
-            <form className={styles.form}>
-                <h1>Login</h1>
-                <FormItem id="email" label="Email" type="text"/>
-                <FormItem id="password" label="Password" type="password"/>
-                <button type="submit" onClick={handleSubmit}>Login</button>
-            </form>
+            <div className={styles.overlay}>
+                <form className={styles.form}>
+                    <h1>Login</h1>
+                    <FormItem id="email" label="Email" type="text"/>
+                    <FormItem id="password" label="Password" type="password"/>
+                    <button type="submit" onClick={handleSubmit}>Login</button>
+                </form>
+            </div>
         </div>
     )
 }
