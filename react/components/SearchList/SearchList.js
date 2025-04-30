@@ -9,7 +9,7 @@ export default function SearchList(props) {
 
     const getSuggestions = async () => {
         try {
-            const res = await fetch(`api/nutrition/`, {
+            const res = await fetch(`/api/nutrition/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -17,6 +17,7 @@ export default function SearchList(props) {
                 body: JSON.stringify({ name: props.input }),
             });
             const data = await res.json();
+            console.log(data);
             const items = data?.foods?.food?.map((item) => ({
                 name: item.food_name,
                 description: item.food_description,

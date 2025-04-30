@@ -1,8 +1,8 @@
 {
-    "crons": [
+      "rewrites": [
         {
-          "path": "/api/cron/12h",
-          "schedule": "0 0 * * *"
+          "source": "/api/nutrition/",
+          "destination": "https://fit-track-backend.onrender.com/api/nutrition/"
         }
       ]
   }
