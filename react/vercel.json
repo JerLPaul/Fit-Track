@@ -1,8 +1,8 @@
 {
       "rewrites": [
         {
-          "source": "/api/nutrition/",
-          "destination": "https://fit-track-backend.onrender.com/api/nutrition/"
+          "source": "/nutrition/",
+          "destination": "https://fit-track-backend.onrender.com/nutrition/"
         }
       ]
   }
