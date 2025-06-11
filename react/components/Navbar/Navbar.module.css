@@ -1,39 +1,82 @@
-
 .navbar {
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Space between logo and other items */
     background-color: #252525;
     border-bottom: 1px solid #d2d2d2;
+    padding: 0.5rem 1rem;
     min-width: 99vw;
 }
 
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-    }
-
-    .navlist > :first-child {
-        display: none;
-    }
-}
-  
 .navlist {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    align-items: center;
     list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.logo {
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.navCenter {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    gap: 1.5rem;
+}
+
+.navRight {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
 }
 
 .navitem {
-    display: flex;
-    flex-direction: row;
-    margin-right: 1rem;
-    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 .navitem:hover {
     cursor: pointer;
     background-color: #8ab4de;
-    border-radius: 5px;
-    transition: background-color 0.5s;
+}
+
+.hamburger {
+    display: none;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 800px) {
+    .navCenter,
+    .navRight {
+        display: none; /* Hide the nav items on small screens */
+    }
+
+    .navlist {
+        display: none; /* Hide the nav items */
+        flex-direction: column; /* Stack items vertically when shown */
+        background-color: #252525;
+        position: absolute;
+        top: 60px; /* Adjust based on navbar height */
+        right: 0;
+        width: 100%;
+        padding: 1rem 0;
+    }
+
+    .navlist.active {
+        display: flex; /* Show the nav items when active */
+    }
+
+    .hamburger {
+        display: block; /* Show the hamburger icon */
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ffffff;
+    }
 }

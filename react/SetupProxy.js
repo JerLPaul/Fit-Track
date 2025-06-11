@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         '/',
         createProxyMiddleware({
-            target: 'https://fit-track-backend.onrender.com/', // Replace with your backend server URL
+            target: 'https://fit-track-backend.onrender.com/',
             changeOrigin: true,
         })
     );

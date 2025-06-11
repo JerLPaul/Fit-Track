@@ -8,7 +8,13 @@ import os
 load_dotenv(find_dotenv())
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+
+# TEMPORARY
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///local_database.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 api = Api(app, version='1.0', title='User API',
           description='A simple User API',
           doc='/api/docs'
