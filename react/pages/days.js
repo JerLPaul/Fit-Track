@@ -23,8 +23,8 @@ export default function Days() {
             <div className={styles.content}>
 
             </div>
-            <div className={styles.addButton}>
-                <button onClick={handleOpen}>+</button>
+            <div className={styles.buttonContainer}>
+                <button className={styles.addButton} onClick={handleOpen}>+</button>
             </div>
         </div>
     )
