@@ -1,4 +1,4 @@
-import styles from "./styles/Days.module.css"
+import styles from "../styles/Days.module.css"
 import Group from "../components/Group/Groups"
 import SearchList from "../components/SearchList/SearchList"
 import { useState } from "react";
