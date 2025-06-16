@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import styles from './Navbar.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
+import { UserContext } from '../../utils/UserContext/UserContext';
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { user } = useContext(UserContext);
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
@@ -25,12 +27,15 @@ export default function Navbar() {
                     <Link href="/plan">Plan</Link>
                 </li>
                 
-                <li className={styles.navitem}>
-                    <Link href="/register">Register</Link>
+                {user ? (
+                    <li className={styles.navitem}>
+                    <Link href="/dashboard">Dashboard</Link>
                 </li>
-                <li className={styles.navitem}>
-                    <Link href="/login">Login</Link>
-                </li>
+                ) : (
+                    <li className={styles.navitem}>
+                        <Link href="/login">Register/Login</Link>
+                    </li>
+                )}
             </ul>
 
             {/* Hamburger Icon on the right */}
