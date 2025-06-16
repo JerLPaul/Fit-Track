@@ -7,6 +7,7 @@
 
 .overlay {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: calc(100px + 25vw);
@@ -33,5 +34,123 @@
 .formItem {
   display: flex;
   justify-content: space-between;
+  border-radius: 20px;
   gap: 0.5rem;
+}
+
+.loginBar {
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #eaeaea;
+  width: 100%;
+}
+
+/* Google Button CSS */
+.gsiMaterialButton {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+  background-color: #131314;
+  background-image: none;
+  border: 1px solid #747775;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #e3e3e3;
+  cursor: pointer;
+  font-family: 'Roboto', arial, sans-serif;
+  font-size: 14px;
+  height: 40px;
+  letter-spacing: 0.25px;
+  outline: none;
+  overflow: hidden;
+  padding: 0 12px;
+  position: relative;
+  text-align: center;
+  -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
+  transition: background-color .218s, border-color .218s, box-shadow .218s;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: auto;
+  max-width: 400px;
+  min-width: min-content;
+  border-color: #8e918f;
+}
+
+.gsiMaterialButton .gsiMaterialButtonIcon {
+  height: 20px;
+  margin-right: 12px;
+  min-width: 20px;
+  width: 20px;
+}
+
+.gsiMaterialButton .gsiMaterialButtonContentWrapper {
+  -webkit-align-items: center;
+  align-items: center;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  height: 100%;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.gsiMaterialButton .gsiMaterialButtonContents {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  font-family: 'Roboto', arial, sans-serif;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+.gsiMaterialButton .gsiMaterialButtonState {
+  -webkit-transition: opacity .218s;
+  transition: opacity .218s;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.gsiMaterialButton:disabled {
+  cursor: default;
+  background-color: #13131461;
+  border-color: #8e918f1f;
+}
+
+.gsiMaterialButton:disabled .gsiMaterialButtonState {
+  background-color: #e3e3e31f;
+}
+
+.gsiMaterialButton:disabled .gsiMaterialButtonContents {
+  opacity: 38%;
+}
+
+.gsiMaterialButton:disabled .gsiMaterialButtonIcon {
+  opacity: 38%;
+}
+
+.gsiMaterialButton:not(:disabled):active .gsiMaterialButtonState, 
+.gsiMaterialButton:not(:disabled):focus .gsiMaterialButtonState {
+  background-color: white;
+  opacity: 12%;
+}
+
+.gsiMaterialButton:not(:disabled):hover {
+  -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+}
+
+.gsiMaterialButton:not(:disabled):hover .gsiMaterialButtonState {
+  background-color: white;
+  opacity: 8%;
 }

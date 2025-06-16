@@ -1,6 +1,6 @@
 import Layout from '../layouts/Default';
 import LoginPopup from "../components/LoginPopup/LoginPopup";
-import styles from '../styles/Home.module.css';
+import styles from '../styles/Login.module.css';
 
 export default function LoginPage() {
     return (
