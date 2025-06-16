@@ -1,5 +1,5 @@
 import styles from "./AddPopup.module.css";
-import SearchList from "../components/SearchList/SearchList"
+import SearchList from "../SearchList/SearchList";
 import { useState } from "react";
 
 export default function AddPopup({ onClose, onAdd }) {
@@ -19,13 +19,15 @@ export default function AddPopup({ onClose, onAdd }) {
     return (
         <div className={styles.popupOverlay}>
             <div className={styles.popupContent}>
+                <div className={styles.closeButtonContainer}>
+                    <button className={styles.closeButton} onClick={onClose}>X</button>
+                </div>
                 <h2>Add New Item</h2>
                 <div className={styles.searchContainer}>
                     <input type="text" className={styles.searchBar} placeholder="Search..." value={input} onChange={handleChange}/>
                     <SearchList input={input}/>
                 </div>
                 <button className={styles.addButton} onClick={handleAdd}>Add</button>
-                <button className={styles.closeButton} onClick={onClose}>Close</button>
             </div>
         </div>
     );

@@ -1,10 +1,14 @@
 import styles from "../styles/Dashboard.module.css"
 import Link from "next/link";
+import Layout from '../layouts/Default';
+
 
 export default function Dashboard() {
 
 
     return (
+    <>
+        <Layout>
         <div className={styles.mainContainer}>
             <div class={styles.option}>
                 <h2> Search </h2>
@@ -19,5 +23,7 @@ export default function Dashboard() {
                 </Link>
             </div>
         </div>
+        </Layout>
+    </>
     );
 }
