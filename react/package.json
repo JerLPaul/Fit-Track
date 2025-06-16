@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
     "@vercel/kv": "^2.0.0",
     "classnames": "^2.5.1",
     "http-proxy-middleware": "^3.0.5",
