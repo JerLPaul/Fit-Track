@@ -50,6 +50,9 @@ function SearchItem(props) {
         setSelected(!selected);
     }
 
+    const handleAdd = (description) => {
+        props.onAdd(description);
+    }
 
     // get the values of protein, carbs and fat from the description
     const data = props.description.match(/: \d+(\.\d+)?g/g);
@@ -57,7 +60,7 @@ function SearchItem(props) {
 
     const description = props.description.replace(/( - | \| )/g, '\n').split('\n');
 
-
+    const isAddable = props?.isAddable ?? false; // Default to false if not provided
 
     return (
         <div className={style.searchItem} onClick={handleClick}>
@@ -87,6 +90,12 @@ function SearchItem(props) {
                     />
                 </div>
                  : null
+            }
+
+            {
+                isAddable ? 
+                <button className={style.addButton} onClick={() => handleAdd(description)}>Add</button> 
+                : null
             }
             
         </div>

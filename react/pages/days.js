@@ -1,9 +1,8 @@
+import Layout from '../layouts/Default';
 import styles from "../styles/Days.module.css"
 import Group from "../components/Group/Groups"
-import SearchList from "../components/SearchList/SearchList"
 import AddPopup from "../components/AddPopup/AddPopup"
 import { useState } from "react";
-import Layout from '../layouts/Default';
 
 
 export default function Days() {
@@ -16,6 +15,13 @@ export default function Days() {
     const handleClose = () => {
         setIsVisible(false);
     }
+
+    const handleAdd = (list) => {
+        // Logic to add a new item
+        console.log("Added list:", list);
+
+        // TODO - Add the list to Supabase db
+    };
     return(
         <div>
             <Layout>
@@ -24,7 +30,7 @@ export default function Days() {
                         <div className={styles.popupOverlay}>
                             <div className={styles.popupContent}>
 
-                                <AddPopup onClose={handleClose} onAdd={() => console.log("Item added")} />
+                                <AddPopup onClose={handleClose} onAdd={(list) => handleAdd(list)}/>
                             </div>
                         </div>
                     )}

@@ -4,6 +4,8 @@ import { useState } from "react";
 
 export default function AddPopup({ onClose, onAdd }) {
     const [ input, setInput ] = useState('');
+    
+    var list = [];
 
     const handleChange = (e) => {
         setInput(e.target.value);
@@ -11,9 +13,14 @@ export default function AddPopup({ onClose, onAdd }) {
     
     const handleAdd = () => {
         // Logic to add a new item
-        onAdd();
+        onAdd(list);
         onClose();
     };
+
+    const addToList = (description) => {
+        list.push(description);
+    }
+
     
 
     return (
@@ -25,10 +32,10 @@ export default function AddPopup({ onClose, onAdd }) {
                 <h2>Add New Item</h2>
                 <div className={styles.searchContainer}>
                     <input type="text" className={styles.searchBar} placeholder="Search..." value={input} onChange={handleChange}/>
-                    <SearchList input={input}/>
+                    <SearchList isAddable={true} onAdd={(description) => addToList(description)} input={input}/>
                 </div>
-                <button className={styles.addButton} onClick={handleAdd}>Add</button>
             </div>
+            <button className={styles.addButton} onClick={() => handleAdd()}>Add</button>
         </div>
     );
 }
