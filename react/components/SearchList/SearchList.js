@@ -50,8 +50,8 @@ function SearchItem(props) {
         setSelected(!selected);
     }
 
-    const handleAdd = (description) => {
-        props.onAdd(description);
+    const handleAdd = (name, description) => {
+        props.onAdd(name, description);
     }
 
     // get the values of protein, carbs and fat from the description
@@ -94,7 +94,7 @@ function SearchItem(props) {
 
             {
                 isAddable ? 
-                <button className={style.addButton} onClick={() => handleAdd(description)}>Add</button> 
+                <button className={style.addButton} onClick={() => handleAdd(props.name, description)}>Add</button> 
                 : null
             }
             
