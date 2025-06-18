@@ -58,3 +58,12 @@
   max-height: 300px;
   margin: 10px 10% 10px 0;
 }
+
+.addButton {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
