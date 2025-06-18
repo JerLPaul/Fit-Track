@@ -1,8 +1,9 @@
 import Layout from '../layouts/Default';
 import styles from "../styles/Days.module.css"
-import Group from "../components/Group/Groups"
+import Group from "../components/Groups/Groups"
 import AddPopup from "../components/AddPopup/AddPopup"
 import { useState } from "react";
+import { supabase } from "../utils/SupabaseClient/SupabaseClient";
 
 
 export default function Days() {
@@ -16,11 +17,29 @@ export default function Days() {
         setIsVisible(false);
     }
 
-    const handleAdd = (list) => {
-        // Logic to add a new item
-        console.log("Added list:", list);
-
-        // TODO - Add the list to Supabase db
+    const handleAdd = async (date, list) => {
+        try {
+            // Convert the list to JSON format
+            const listJSON = JSON.stringify(list);
+    
+            // Insert the data into the "Day" table
+            const { data, error } = await supabase
+                .from("Day")
+                .insert([
+                    {
+                        date: date, // Store the date
+                        food_list: listJSON, // Store the list as JSON
+                    },
+                ]);
+    
+            if (error) {
+                console.error("Error inserting data into Supabase:", error.message);
+            } else {
+                console.log("Data successfully added to Supabase:", data);
+            }
+        } catch (err) {
+            console.error("Unexpected error:", err);
+        }
     };
     return(
         <div>
@@ -30,7 +49,7 @@ export default function Days() {
                         <div className={styles.popupOverlay}>
                             <div className={styles.popupContent}>
 
-                                <AddPopup onClose={handleClose} onAdd={(list) => handleAdd(list)}/>
+                                <AddPopup onClose={handleClose} onAdd={(date, list) => handleAdd(date, list)}/>
                             </div>
                         </div>
                     )}
