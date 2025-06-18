@@ -80,3 +80,22 @@
     width: 100%;
 }
 
+.dateRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.dateLabel {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.dateInput {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
