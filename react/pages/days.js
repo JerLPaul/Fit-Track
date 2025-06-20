@@ -1,6 +1,6 @@
 import Layout from '../layouts/Default';
 import styles from "../styles/Days.module.css"
-import Group from "../components/Groups/Groups"
+import Groups from "../components/Groups/Groups"
 import AddPopup from "../components/AddPopup/AddPopup"
 import { useState } from "react";
 import { supabase } from "../utils/SupabaseClient/SupabaseClient";
@@ -54,7 +54,8 @@ export default function Days() {
                         </div>
                     )}
                     <div className={styles.content}>
-
+                        <h1 className={styles.title}>Days</h1>
+                        <Groups />
                     </div>
                     <div className={styles.buttonContainer}>
                         <button className={styles.addButton} onClick={handleOpen}>+</button>
