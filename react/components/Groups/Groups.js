@@ -9,7 +9,8 @@ export default function Groups() {
         try {
             const { data, error } = await supabase
                 .from("Day")
-                .select("*"); // Fetch initial data
+                .select("*")
+                .order("date", { ascending: true });
 
             if (error) {
                 console.error("Error fetching data from Supabase:", error.message);
@@ -88,7 +89,7 @@ export default function Groups() {
     }, []);
 
     return (
-        <div>
+        <div className={styles.groupsContainer}>
             <h1>Groups</h1>
             {days.length > 0 ? (
                 <div className={styles.contentContainer}>
