@@ -68,65 +68,68 @@ export default function AddPopup({ onClose, onAdd }) {
 
     return (
         <div className={styles.popupOverlay}>
+            <div className={styles.closeButtonContainer}>
+                <button className={styles.closeButton} onClick={onClose}>
+                    X
+                </button>
+            </div>
             <div className={styles.popupContent}>
-                <div className={styles.closeButtonContainer}>
-                    <button className={styles.closeButton} onClick={onClose}>
-                        X
+                <div className={styles.addContainer}>
+                    <div className={styles.dateRow}>
+                        <label htmlFor="dateInput" className={styles.dateLabel}>Date:</label>
+                        <input
+                            type="date"
+                            id="dateInput"
+                            className={styles.dateInput}
+                            value={dateInput}
+                            onChange={handleDateChange}
+                        />
+                        {error === "NO_DATE" && <p className={styles.error}>Please select a date</p>}
+                    </div>
+
+                    <h2>Add New Item</h2>
+                    <div className={styles.searchContainer}>
+                        <input
+                            type="text"
+                            className={styles.searchBar}
+                            placeholder="Search..."
+                            value={input}
+                            onChange={handleChange}
+                        />
+                        <SearchList
+                            isAddable={true}
+                            onAdd={(name, description) => addToList(name, description)}
+                            input={input}
+                        />
+                    </div>
+                    <button className={styles.addButton} onClick={handleAdd}>
+                        Add
                     </button>
                 </div>
-
                 {list.size > 0 ? ( 
-                    <div className={styles.selectedItemsContainer}>
+                    <div className={styles.selectedItemsSection}>
                         <h2>Selected Items</h2>
-                        {Array.from(list.entries()).map(([name, description], index) => (
-                            <div key={index} className={styles.listItemContainer}>
-                                <button
-                                    className={styles.removeButton}
-                                    onClick={() => removeFromList(name)} // Remove item by name
-                                >
-                                    X
-                                </button>
-                                <ListItem name={name} description={description} />
-                            </div>
-                        ))}
+                        <div className={styles.selectedItemsContainer}>
+                            {Array.from(list.entries()).map(([name, description], index) => (
+                                <div key={index} className={styles.listItemContainer}>
+                                    <button
+                                        className={styles.removeButton}
+                                        onClick={() => removeFromList(name)} // Remove item by name
+                                    >
+                                        X
+                                    </button>
+                                    <ListItem name={name} description={description} />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ) : (
                     <div className={styles.noItemsContainer}>
                         <p>No items selected</p>
                     </div>
                 )}
-
-                <div className={styles.dateRow}>
-                    <label htmlFor="dateInput" className={styles.dateLabel}>Date:</label>
-                    <input
-                        type="date"
-                        id="dateInput"
-                        className={styles.dateInput}
-                        value={dateInput}
-                        onChange={handleDateChange}
-                    />
-                    {error === "NO_DATE" && <p className={styles.error}>Please select a date</p>}
-                </div>
-
-                <h2>Add New Item</h2>
-                <div className={styles.searchContainer}>
-                    <input
-                        type="text"
-                        className={styles.searchBar}
-                        placeholder="Search..."
-                        value={input}
-                        onChange={handleChange}
-                    />
-                    <SearchList
-                        isAddable={true}
-                        onAdd={(name, description) => addToList(name, description)}
-                        input={input}
-                    />
-                </div>
             </div>
-            <button className={styles.addButton} onClick={handleAdd}>
-                Add
-            </button>
+            
         </div>
     );
 }

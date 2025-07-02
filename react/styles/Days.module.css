@@ -47,9 +47,10 @@
     top: 50%;
     left: 50%;
     width: 50%;
+    min-height: 50vh;
     max-height: 70vh;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.772);
     display: flex;
     justify-content: center;
     align-items: center;
