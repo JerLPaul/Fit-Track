@@ -51,7 +51,6 @@ export default function Days() {
                         </div>
                     )}
                     <div className={styles.content}>
-                        <h1 className={styles.title}>Days</h1>
                         <Groups />
                     </div>
                     <div className={styles.buttonContainer}>

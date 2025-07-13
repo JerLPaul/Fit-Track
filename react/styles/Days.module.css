@@ -4,8 +4,8 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-    margin-top: 10%;
     min-height: 90vh;
+    margin: 5% 0 5% 0;
     overflow-y: auto;
 }
 
