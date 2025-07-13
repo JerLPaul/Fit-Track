@@ -47,10 +47,7 @@ export default function Days() {
                 <div className={styles.mainContainer}>
                     {isVisible && (
                         <div className={styles.popupOverlay}>
-                            <div className={styles.popupContent}>
-
-                                <AddPopup onClose={handleClose} onAdd={(date, list) => handleAdd(date, list)}/>
-                            </div>
+                            <AddPopup onClose={handleClose} onAdd={(date, list) => handleAdd(date, list)}/>
                         </div>
                     )}
                     <div className={styles.content}>

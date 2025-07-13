@@ -108,7 +108,6 @@ export default function AddPopup({ onClose, onAdd }) {
                 </div>
                 {list.size > 0 ? ( 
                     <div className={styles.selectedItemsSection}>
-                        <h2>Selected Items</h2>
                         <div className={styles.selectedItemsContainer}>
                             {Array.from(list.entries()).map(([name, description], index) => (
                                 <div key={index} className={styles.listItemContainer}>

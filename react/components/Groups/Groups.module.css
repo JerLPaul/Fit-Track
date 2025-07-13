@@ -1,0 +1,43 @@
+.groupsContainer {
+    width: 50%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.groupItem {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.foodList {
+    list-style: none;
+    padding: 0; /* Remove default padding */
+    margin: 10px 0 0 0; /* Adjust margin */
+}
+
+.foodItem {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.foodItem ul {
+    list-style: none; 
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+}
+
+.foodItem li {
+    list-style: none;
+    margin-bottom: 5px; /* Add space between food items */
+}

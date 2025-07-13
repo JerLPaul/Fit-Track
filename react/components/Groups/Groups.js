@@ -95,7 +95,7 @@ export default function Groups() {
                 <div className={styles.contentContainer}>
                     {days.map((day) => (
                         <div key={day.id} className={styles.groupItem}>
-                            <h2>{day.date}</h2>
+                            <h3>{day.date}</h3>
                             {day.food_list && day.food_list.length > 0 ? (
                                 <ul className={styles.foodList}>
                                     {day.food_list.map((item, index) => (

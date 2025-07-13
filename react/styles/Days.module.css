@@ -16,6 +16,7 @@
     align-items: center;
     width: 100%;
 }
+
 .buttonContainer {
     position: fixed;
     bottom: 5%;
@@ -42,28 +43,16 @@
 .popupOverlay {
     display: flex;
     justify-content: center;
-    align-items: center;
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 50%;
+    width: 70%;
     min-height: 50vh;
     max-height: 70vh;
     transform: translate(-50%, -50%);
     background-color: rgba(0, 0, 0, 0.772);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-}
-
-.popupContent {
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    max-height: 100%;
-    overflow-y: auto;
 }
