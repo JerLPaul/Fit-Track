@@ -6,6 +6,7 @@ import { useState } from "react";
 export default function AddPopup({ onClose, onAdd }) {
     const [input, setInput] = useState('');
     const [dateInput, setDateInput] = useState('');
+    const [total, setTotal] = useState([]);
     const [error, setError] = useState(null);
     const [list, setList] = useState(new Map()); // Use Map for storing key-value pairs
 
@@ -25,14 +26,21 @@ export default function AddPopup({ onClose, onAdd }) {
         }
 
         const listArray = Array.from(list.entries()).map(([name, description]) => ({ name, description }));
-        onAdd(dateInput, listArray);
+        onAdd(dateInput, listArray, total);
         onClose();
     };
 
     const addToList = (name, description) => {
         setList((prevList) => {
             const newList = new Map(prevList);
-    
+
+            const newTotal = total;
+            newTotal[0] += description.calories.match(/\d+/g) ? parseInt(description.calories.match(/\d+/g)[0]) : 0;
+            newTotal[1] += description.fat.match(/\d+/g) ? parseInt(description.fat.match(/\d+/g)[0]) : 0;
+            newTotal[2] += description.carbs.match(/\d+/g) ? parseInt(description.carbs.match(/\d+/g)[0]) : 0;
+            newTotal[3] += description.protein.match(/\d+/g) ? parseInt(description.protein.match(/\d+/g)[0]) : 0;
+            setTotal(newTotal);
+
             if (newList.has(name)) {
                 // If the item already exists, increment the count
                 const existingDescription = newList.get(name);

@@ -17,7 +17,7 @@ export default function Days() {
         setIsVisible(false);
     }
 
-    const handleAdd = async (date, list) => {
+    const handleAdd = async (date, list, total) => {
         try {
             // Convert the list to JSON format
             const listJSON = JSON.stringify(list);
@@ -47,7 +47,7 @@ export default function Days() {
                 <div className={styles.mainContainer}>
                     {isVisible && (
                         <div className={styles.popupOverlay}>
-                            <AddPopup onClose={handleClose} onAdd={(date, list) => handleAdd(date, list)}/>
+                            <AddPopup onClose={handleClose} onAdd={(date, list, total) => handleAdd(date, list, total)}/>
                         </div>
                     )}
                     <div className={styles.content}>
