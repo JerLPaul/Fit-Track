@@ -6,9 +6,10 @@ import { useState } from "react";
 export default function AddPopup({ onClose, onAdd }) {
     const [input, setInput] = useState('');
     const [dateInput, setDateInput] = useState('');
-    const [total, setTotal] = useState([]);
+    const [total, setTotal] = useState([0,0,0,0]);
     const [error, setError] = useState(null);
     const [list, setList] = useState(new Map()); // Use Map for storing key-value pairs
+
 
     const handleChange = (e) => {
         setInput(e.target.value);
@@ -31,14 +32,15 @@ export default function AddPopup({ onClose, onAdd }) {
     };
 
     const addToList = (name, description) => {
+        console.log("Adding to list:", name, description);
         setList((prevList) => {
             const newList = new Map(prevList);
 
             const newTotal = total;
-            newTotal[0] += description.calories.match(/\d+/g) ? parseInt(description.calories.match(/\d+/g)[0]) : 0;
-            newTotal[1] += description.fat.match(/\d+/g) ? parseInt(description.fat.match(/\d+/g)[0]) : 0;
-            newTotal[2] += description.carbs.match(/\d+/g) ? parseInt(description.carbs.match(/\d+/g)[0]) : 0;
-            newTotal[3] += description.protein.match(/\d+/g) ? parseInt(description.protein.match(/\d+/g)[0]) : 0;
+            newTotal[0] += description[1].match(/\d+/g) ? parseInt(description[1].match(/\d+/g)[0]) : 0; // Calories
+            newTotal[1] += description[2].match(/\d+/g) ? parseInt(description[2].match(/\d+/g)[0]) : 0; // Fat
+            newTotal[2] += description[3].match(/\d+/g) ? parseInt(description[3].match(/\d+/g)[0]) : 0; // Carbs
+            newTotal[3] += description[4].match(/\d+/g) ? parseInt(description[4].match(/\d+/g)[0]) : 0; // Protein
             setTotal(newTotal);
 
             if (newList.has(name)) {
@@ -63,10 +65,10 @@ export default function AddPopup({ onClose, onAdd }) {
             const newTotal = total.slice(); // Create a copy of the total array
             const itemDescription = newList.get(name);
             if (itemDescription) {
-                newTotal[0] -= itemDescription.calories.match(/\d+/g) ? parseInt(itemDescription.calories.match(/\d+/g)[0]) : 0;
-                newTotal[1] -= itemDescription.fat.match(/\d+/g) ? parseInt(itemDescription.fat.match(/\d+/g)[0]) : 0;
-                newTotal[2] -= itemDescription.carbs.match(/\d+/g) ? parseInt(itemDescription.carbs.match(/\d+/g)[0]) : 0;
-                newTotal[3] -= itemDescription.protein.match(/\d+/g) ? parseInt(itemDescription.protein.match(/\d+/g)[0]) : 0;
+                newTotal[0] -= itemDescription[1].match(/\d+/g) ? parseInt(itemDescription[1].match(/\d+/g)[0]) : 0; // Calories
+                newTotal[1] -= itemDescription[2].match(/\d+/g) ? parseInt(itemDescription[2].match(/\d+/g)[0]) : 0; // Fat
+                newTotal[2] -= itemDescription[3].match(/\d+/g) ? parseInt(itemDescription[3].match(/\d+/g)[0]) : 0; // Carbs
+                newTotal[3] -= itemDescription[4].match(/\d+/g) ? parseInt(itemDescription[4].match(/\d+/g)[0]) : 0; // Protein
                 setTotal(newTotal);
             }
 
