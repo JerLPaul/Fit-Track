@@ -9,6 +9,12 @@ export default function AddPopup({ onClose, onAdd }) {
     const [total, setTotal] = useState([0,0,0,0]);
     const [error, setError] = useState(null);
     const [list, setList] = useState(new Map()); // Use Map for storing key-value pairs
+    const [expandedItem, setExpandedItem] = useState(null); // Track which item is expanded
+
+    const toggleExpand = (index) => {
+        setExpandedItem((prev) => (prev === index ? null : index)); // Toggle expanded state
+    };
+
 
 
     const handleChange = (e) => {
@@ -131,10 +137,20 @@ export default function AddPopup({ onClose, onAdd }) {
                     <div className={styles.selectedItemsSection}>
                         <div className={styles.selectedItemsContainer}>
                             {Array.from(list.entries()).map(([name, description], index) => (
-                                <div key={index} className={styles.listItemContainer}>
+                                <div 
+                                    key={index} 
+                                    className={`${styles.listItemContainer} ${
+                                        expandedItem === index ? styles.expanded : ""
+                                    }`}
+                                    onClick={() => toggleExpand(index)} // Toggle expand on click
+                                >
+                                    
                                     <button
                                         className={styles.removeButton}
-                                        onClick={() => removeFromList(name)} // Remove item by name
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeFromList(name)
+                                        }} // Remove item by name
                                     >
                                         X
                                     </button>

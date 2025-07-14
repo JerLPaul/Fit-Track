@@ -12,7 +12,6 @@
     width: 100%;
     height: 100%;
     gap: 20px;
-    overflow-y: hidden;
     align-items: flex-start;
     justify-content: flex-start;
     overflow-y: hidden;
@@ -68,20 +67,24 @@
 }
 
 .selectedItemsSection {
-    flex: 1; /* Allow this section to grow and fill remaining space */
     display: flex;
     flex-direction: column;
-    min-height: 100%; /* Limit height to prevent overflow */
-    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    flex: 1; /* Allow this section to grow and fill remaining space */
+    height: 100%;
 }
 
 .selectedItemsContainer {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Responsive grid layout */
-    gap: 20px; /* Space between items */
+    grid-template-columns: repeat(2, minmax(100px, auto)); /* Responsive grid layout */
+    grid-auto-rows: 200px;
     width: 100%; /* Full width */
+    max-height: 100%;
+    overflow-y: auto;
     align-items: start;
-    grid-auto-rows: minmax(100px, auto);
+    transition: grid-template-columns 0.1s ease; /* Smooth transition for grid layout */
+    box-sizing: border-box; /* Include padding in width/height calculations */
+    margin-bottom: 5%;
+
 }
 
 
@@ -89,17 +92,25 @@
     display: block;
     margin-top: 5%;
     width: 100%;
-    border: 1px solid white;
-    border-radius: 10px;
     overflow: hidden; 
-    transition: height 0.3s ease; 
+    transition: all 0.1s ease; /* Smooth transition for height and other changes */
+    cursor: pointer;
+
+}
+
+.listItemContainer.expanded {
+    grid-row: span 2; /* Make the expanded item span 2 columns */
+    height: auto; /* Allow the height to adjust for expanded content */
+    padding: 20px; /* Add padding for expanded content */
 }
 
 .totalContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    width: 50%;
+    position: fixed;
+    bottom: 0;
 }
 
 .removeButton {
