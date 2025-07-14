@@ -59,6 +59,17 @@ export default function AddPopup({ onClose, onAdd }) {
     const removeFromList = (name) => {
         setList((prevList) => {
             const newList = new Map(prevList);
+
+            const newTotal = total.slice(); // Create a copy of the total array
+            const itemDescription = newList.get(name);
+            if (itemDescription) {
+                newTotal[0] -= itemDescription.calories.match(/\d+/g) ? parseInt(itemDescription.calories.match(/\d+/g)[0]) : 0;
+                newTotal[1] -= itemDescription.fat.match(/\d+/g) ? parseInt(itemDescription.fat.match(/\d+/g)[0]) : 0;
+                newTotal[2] -= itemDescription.carbs.match(/\d+/g) ? parseInt(itemDescription.carbs.match(/\d+/g)[0]) : 0;
+                newTotal[3] -= itemDescription.protein.match(/\d+/g) ? parseInt(itemDescription.protein.match(/\d+/g)[0]) : 0;
+                setTotal(newTotal);
+            }
+
             if (newList.get(name)?.count > 1) {
                 // If the item count is greater than 1, decrement the count
                 const existingDescription = newList.get(name);
@@ -128,6 +139,13 @@ export default function AddPopup({ onClose, onAdd }) {
                                     <ListItem name={name} description={description} />
                                 </div>
                             ))}
+                        </div>
+                        <div className={styles.totalContainer}>
+                            <h3>Total:</h3>
+                            <p>Calories: {total[0]}</p>
+                            <p>Fat: {total[1]}g</p>
+                            <p>Carbs: {total[2]}g</p>
+                            <p>Protein: {total[3]}g</p>
                         </div>
                     </div>
                 ) : (
