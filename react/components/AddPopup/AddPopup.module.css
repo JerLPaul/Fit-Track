@@ -101,7 +101,6 @@
 .listItemContainer.expanded {
     grid-row: span 2; /* Make the expanded item span 2 columns */
     height: auto; /* Allow the height to adjust for expanded content */
-    padding: 20px; /* Add padding for expanded content */
 }
 
 .totalContainer {
