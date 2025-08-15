@@ -147,13 +147,12 @@ class Nutrition(Resource):
     def post(self):
         """Call the API to get nutrition facts"""
         args = nutrition_args.parse_args()
-        search_url = "https://platform.fatsecret.com/rest/server.api"
+        search_url = "https://platform.fatsecret.com/rest/food/autocomplete/v2"
         headers = {
             'Authorization': f'Bearer {auth_token}'
         }
         params = {
-            'method': 'foods.search',
-            'search_expression': args['name'],
+            'expression': args['name'],
             'format': 'json',
         }
 
