@@ -3,30 +3,30 @@ import { supabase } from '../../utils/SupabaseClient/SupabaseClient';
 
 export default function LoginPopup() {
 
-    const login = async (email, password) => {
-        try {
-            const res = await fetch('api/users/', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
+    // const login = async (email, password) => {
+    //     try {
+    //         const res = await fetch('api/users/', {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ email, password }),
 
-            });
+    //         });
 
-            const data = await res.json();
-            console.log(data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
+    //         const data = await res.json();
+    //         console.log(data);
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //     }
+    // }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     const email = e.target.email.value;
+    //     const password = e.target.password.value;
         
-    }
+    // }
 
     const handleGoogleAuth = async () => {
         try {
@@ -68,11 +68,11 @@ export default function LoginPopup() {
                     </div>
                 </button>
 
-                <form className={styles.form}>
+                {/* <form className={styles.form}>
                     <FormItem id="email" label="Email" type="text"/>
                     <FormItem id="password" label="Password" type="password"/>
                     <button type="submit" onClick={handleSubmit}>Login</button>
-                </form>
+                </form> */}
             </div>
         </div>
     )

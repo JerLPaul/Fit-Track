@@ -23,9 +23,9 @@ export default function Navbar() {
 
             {/* Navigation Links */}
             <ul className={`${styles.navlist} ${menuOpen ? styles.active : ''}`}>
-                <li className={styles.navitem}>
+                {/* <li className={styles.navitem}>
                     <Link href="/plan">Plan</Link>
-                </li>
+                </li> */}
                 
                 {user ? (
                     <li className={styles.navitem}>

@@ -16,6 +16,10 @@
               -24px -24px 48px #383838;
 }
 
+.overlay button {
+  margin-bottom: 5%;
+}
+
 @media (max-width: 800px) {
   .overlay {
     width: 100%;
