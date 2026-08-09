@@ -1,16 +1,11 @@
-import Layout from '../layouts/Default';
-import Register from '../components/RegisterPopup/RegisterPopup';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-import styles from '../styles/Home.module.css';
-
-export default function RegisterPage() {
-    return (
-        <div>
-            <Layout>
-                <div className={styles.container}>
-                    <Register />
-                </div>
-            </Layout>
-        </div>
-    );
+// Register and Login are now a single tabbed AuthForm at /login.
+export default function RegisterRedirect() {
+    const router = useRouter();
+    useEffect(() => {
+        router.replace('/login');
+    }, [router]);
+    return null;
 }

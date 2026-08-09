@@ -1,0 +1,38 @@
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-4) var(--space-8);
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-6);
+}
+
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.searchBar {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  width: 100%;
+  font-size: 1rem;
+  transition: border-color var(--transition);
+}
+
+.searchBar:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}

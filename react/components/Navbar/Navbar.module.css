@@ -1,11 +1,29 @@
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Space between logo and other items */
-    background-color: #252525;
-    border-bottom: 1px solid #d2d2d2;
-    padding: 0.5rem 1rem;
-    min-width: 99vw;
+    justify-content: space-between;
+    gap: var(--space-4);
+    background-color: var(--color-bg-alt);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0 var(--space-5);
+    height: var(--nav-height);
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 700;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+}
+
+.wordmark {
+    letter-spacing: -0.01em;
 }
 
 .navlist {
@@ -13,70 +31,230 @@
     align-items: center;
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 auto;
+    gap: var(--space-2);
 }
 
-.logo {
-    font-size: 1.5rem;
-    color: #ffffff;
+.navitem a {
+    display: inline-block;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    font-size: 0.92rem;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-pill);
+    transition: background-color var(--transition), color var(--transition);
 }
 
-.navCenter {
-    display: flex;
-    justify-content: center;
-    flex-grow: 1;
-    gap: 1.5rem;
+.navitem a:hover {
+    color: var(--color-text);
+    background-color: var(--color-primary-soft);
+}
+
+.navitemActive {
+    color: var(--color-primary) !important;
+    background-color: var(--color-primary-soft);
 }
 
 .navRight {
     display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
 }
 
-.navitem {
+.signInButton {
+    background-color: var(--color-primary);
     color: #ffffff;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    transition: background-color var(--transition);
 }
 
-.navitem:hover {
+.signInButton:hover {
+    background-color: var(--color-primary-hover);
+}
+
+/* ---------- Account dropdown ---------- */
+.accountMenu {
+    position: relative;
+}
+
+.avatarButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: transparent;
+    border: none;
     cursor: pointer;
-    background-color: #8ab4de;
+    padding: var(--space-1);
+    border-radius: var(--radius-pill);
+    transition: background-color var(--transition);
 }
 
+.avatarButton:hover {
+    background-color: var(--color-primary-soft);
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.chevron {
+    color: var(--color-text-muted);
+    transition: transform var(--transition);
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    min-width: 220px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    animation: dropdownIn 140ms ease;
+}
+
+@keyframes dropdownIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdownHeader {
+    padding: var(--space-2) var(--space-3);
+}
+
+.dropdownEmail {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdownDivider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: var(--space-1) 0;
+}
+
+.dropdownItem,
+.dropdownItemDanger {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background-color var(--transition);
+}
+
+.dropdownItem:hover {
+    background-color: var(--color-primary-soft);
+}
+
+.dropdownItemDanger {
+    color: var(--color-danger);
+}
+
+.dropdownItemDanger:hover {
+    background-color: var(--color-danger-soft);
+}
+
+/* ---------- Mobile ---------- */
 .hamburger {
     display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-2);
 }
 
-/* Responsive styles for smaller screens */
-@media (max-width: 800px) {
-    .navCenter,
-    .navRight {
-        display: none; /* Hide the nav items on small screens */
-    }
+.hamburger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-text);
+    border-radius: 2px;
+}
 
+.mobilePanel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-3);
+    gap: var(--space-1);
+}
+
+.mobileItem,
+.mobileItemDanger {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--color-text);
+}
+
+.mobileItem:hover {
+    background-color: var(--color-primary-soft);
+}
+
+.mobileItemDanger {
+    color: var(--color-danger);
+}
+
+@media (max-width: 760px) {
     .navlist {
-        display: none; /* Hide the nav items */
-        flex-direction: column; /* Stack items vertically when shown */
-        background-color: #252525;
-        position: absolute;
-        top: 60px; /* Adjust based on navbar height */
-        right: 0;
-        width: 100%;
-        padding: 1rem 0;
-    }
-
-    .navlist.active {
-        display: flex; /* Show the nav items when active */
+        display: none;
     }
 
     .hamburger {
-        display: block; /* Show the hamburger icon */
-        cursor: pointer;
-        font-size: 1.5rem;
-        color: #ffffff;
+        display: flex;
     }
 }

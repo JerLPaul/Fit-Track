@@ -1,172 +1,254 @@
 .popupOverlay {
-   display: flex;
-   flex-direction: column;
-   width: 100%;
-   overflow-y: auto;
-   overflow-x: hidden;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(15, 17, 15, 0.55);
+    padding: var(--space-4);
+    z-index: 60;
 }
 
 .popupContent {
-    margin: 2% 2% 0 0;
-    display: flex;
     width: 100%;
-    height: 100%;
-    gap: 20px;
-    align-items: flex-start;
-    justify-content: flex-start;
-    overflow-y: hidden;
-}
-
-.searchBar {
-    margin-top: 2rem;
-    padding: 1rem;
-    border-radius: 10px;
-    border: 1px solid #eaeaea;
-    width: 100%;
-    max-width: 800px;
-}
-
-.addContainer {
-    flex: 0 0 30%; /* Take up 40% of the popup space */
-    height: auto; /* Adjust height based on content */
-    overflow-y: auto; /* Add scroll if content overflows */
-}
-  
-.searchContainer {
+    max-width: 880px;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    max-height: 50vh;
-    overflow-y: auto;
-    width: 100%;
-}
-  
-.searchBar:focus {
-    border: 1px solid #eaeaea;
+    background-color: var(--color-bg-alt);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
 }
 
-.closeButtonContainer {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
+.popupHeader {
     display: flex;
-    justify-content: flex-start;
-    width: auto;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-5) 0;
+}
+
+.popupHeader h2 {
+    margin: 0;
+    font-size: 1.25rem;
 }
 
 .closeButton {
+    background: none;
     border: none;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--color-text-muted);
     cursor: pointer;
-    font-size: 1.5rem;
-    color: white;
-    background-color: transparent;
-    padding: 5px;
-    width: auto;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition);
 }
 
-.selectedItemsSection {
+.closeButton:hover {
+    background-color: var(--color-primary-soft);
+    color: var(--color-text);
+}
+
+.metaRow {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5) 0;
+}
+
+.metaField {
     display: flex;
     flex-direction: column;
-    flex: 1; /* Allow this section to grow and fill remaining space */
-    height: 100%;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
 }
 
-.selectedItemsContainer {
+.metaField input,
+.metaField select {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.error {
+    color: var(--color-danger);
+    font-size: 0.82rem;
+    margin: var(--space-2) var(--space-5) 0;
+}
+
+.body {
     display: grid;
-    grid-template-columns: repeat(2, minmax(100px, auto)); /* Responsive grid layout */
-    grid-auto-rows: 200px;
-    width: 100%; /* Full width */
-    max-height: 100%;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-5);
+    padding: var(--space-4) var(--space-5) var(--space-5);
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+}
+
+.searchColumn,
+.selectedColumn {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.searchBar {
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.searchBar:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.searchResults {
     overflow-y: auto;
-    align-items: start;
-    transition: grid-template-columns 0.1s ease; /* Smooth transition for grid layout */
-    box-sizing: border-box; /* Include padding in width/height calculations */
-    margin-bottom: 5%;
-
+    margin-top: var(--space-3);
+    padding-right: 4px;
 }
 
-
-.listItemContainer {
-    display: block;
-    margin-top: 5%;
-    width: 100%;
-    overflow: hidden; 
-    transition: all 0.1s ease; /* Smooth transition for height and other changes */
-    cursor: pointer;
-
+.selectedHeading {
+    margin: 0 0 var(--space-3);
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
 }
 
-.listItemContainer.expanded {
-    grid-row: span 2; /* Make the expanded item span 2 columns */
-    height: auto; /* Allow the height to adjust for expanded content */
+.selectedItems {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-right: 4px;
 }
 
-.totalContainer {
+.selectedRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 50%;
-    position: fixed;
-    bottom: 0;
+    gap: var(--space-2);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
 }
 
-.removeButton {
-    background-color: #f44336;
-    color: white;
-    border: none;
+.selectedRow > :first-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-right: var(--space-3);
+    flex-shrink: 0;
+}
+
+.stepper button {
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-size: 1rem;
+    line-height: 1;
     cursor: pointer;
-    position: relative;
-    top: 10px;
-    left: 10px;
-}
-
-.noItemsContainer {
     display: flex;
+    align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 100%;
-    font-size: 1.2rem;
 }
 
+.stepper button:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
 
-.addButton {
-    background-color: #4CAF50;
-    color: white;
+.stepper span {
+    min-width: 1.1em;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.emptyState {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.88rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+}
+
+.totalCard {
+    margin-top: var(--space-3);
+    background-color: var(--color-primary-soft);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    flex-shrink: 0;
+}
+
+.totalCard h4 {
+    margin: 0 0 var(--space-2);
+    font-size: 0.82rem;
+    color: var(--color-primary);
+}
+
+.totalGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1) var(--space-3);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.saveButton {
+    margin-top: var(--space-4);
+    flex-shrink: 0;
+    background-color: var(--color-primary);
+    color: #ffffff;
     border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
     cursor: pointer;
+    transition: background-color var(--transition);
 }
 
-
-.selectedItem {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    width: 100%;
+.saveButton:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
 }
 
-.dateRow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
+.saveButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
-.dateLabel {
-    font-size: 16px;
-    font-weight: bold;
-}
+@media (max-width: 760px) {
+    .body {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
 
-.dateInput {
-    padding: 5px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    .popupContent {
+        max-height: 92vh;
+    }
 }
-

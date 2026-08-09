@@ -1,123 +1,165 @@
 import styles from "./Groups.module.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { supabase } from "../../utils/SupabaseClient/SupabaseClient";
+import { UserContext } from "../../utils/UserContext/UserContext";
 
-export default function Groups() {
-    const [days, setDays] = useState([]); // State to store the fetched data
+function formatDate(dateStr) {
+    return new Date(`${dateStr}T00:00:00`).toLocaleDateString(undefined, {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+    });
+}
+
+export default function Groups({ refreshKey }) {
+    const { user } = useContext(UserContext);
+    const [days, setDays] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const fetchDays = async () => {
-        try {
-            const { data, error } = await supabase
-                .from("Day")
-                .select("*")
-                .order("date", { ascending: true });
+        if (!user) return;
+        setLoading(true);
+        // Bug fix: this used to query the "Day" table with no filter at all,
+        // so every signed-in user saw and could edit every other user's
+        // food log. It's now scoped to the current user (also enforced
+        // server-side by Row Level Security, see supabase/schema.sql).
+        const { data, error } = await supabase
+            .from("Day")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("date", { ascending: false });
 
-            if (error) {
-                console.error("Error fetching data from Supabase:", error.message);
-                return;
-            }
-
-            const parsedData = data.map((day) => {
-                const ParsedDay = {};
-                ParsedDay.id = day.id;
-                ParsedDay.date = day.date;
-
-                // Parse food_list from JSON string to array
-                try {
-                    const foodList = JSON.parse(day.food_list); // Parse food_list JSON string
-                    if (Array.isArray(foodList)) {
-                        ParsedDay.food_list = foodList; // Set parsed food_list if it's an array
-                    } else {
-                        console.error("food_list is not an array:", foodList);
-                        ParsedDay.food_list = []; // Fallback to empty array
-                    }
-                } catch (e) {
-                    console.error("Error parsing food_list:", e);
-                    ParsedDay.food_list = []; // Fallback to empty array
-                }
-
-                return ParsedDay;
-        });
-
-        console.log("Fetched days:", parsedData);
-        setDays(parsedData); // Set the parsed data to state
-            
-        } catch (err) {
-            console.error("Unexpected error:", err);
+        if (error) {
+            console.error("Error fetching days from Supabase:", error.message);
+            setDays([]);
+            setLoading(false);
+            return;
         }
+
+        // food_list is stored as jsonb, so it already comes back as an
+        // array -- no JSON.parse needed (the previous version parsed a
+        // JSON string here, which broke as soon as the column was jsonb).
+        setDays(data ?? []);
+        setLoading(false);
     };
 
     useEffect(() => {
-        // Fetch initial data
         fetchDays();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, refreshKey]);
 
-        // Subscribe to realtime changes using channels
+    useEffect(() => {
+        if (!user) return;
+
         const channel = supabase
-            .channel("public-db-changes") // Channel name can be any string except 'realtime'
+            .channel(`day-changes-${user.id}`)
             .on(
                 "postgres_changes",
                 {
-                    event: "*", // Listen to all events (INSERT, UPDATE, DELETE)
-                    schema: "public", // Specify the schema
-                    table: "Day", // Specify the table
+                    event: "*",
+                    schema: "public",
+                    table: "Day",
+                    filter: `user_id=eq.${user.id}`,
                 },
-                (payload) => {
-                    console.log("Realtime change received:", payload);
-
-                    // Update the state based on the change type
-                    if (payload.eventType === "INSERT") {
-                        setDays((prevDays) => [...prevDays, payload.new]); // Add new row
-                    } else if (payload.eventType === "UPDATE") {
-                        setDays((prevDays) =>
-                            prevDays.map((day) =>
-                                day.id === payload.new.id ? payload.new : day
-                            )
-                        ); // Update existing row
-                    } else if (payload.eventType === "DELETE") {
-                        setDays((prevDays) =>
-                            prevDays.filter((day) => day.id !== payload.old.id)
-                        ); // Remove deleted row
-                    }
+                () => {
+                    // Re-fetch on any change rather than hand-splicing the
+                    // payload into state -- the previous INSERT handler
+                    // pushed the raw (still-JSON-string) payload into state
+                    // with a different shape than the initial parsed fetch,
+                    // so newly-added days rendered broken until a refresh.
+                    fetchDays();
                 }
             )
             .subscribe();
 
-        // Cleanup subscription on component unmount
         return () => {
             supabase.removeChannel(channel);
         };
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
+
+    const handleDelete = async (id) => {
+        const { error } = await supabase.from("Day").delete().eq("id", id);
+        if (error) {
+            console.error("Error deleting day:", error.message);
+            return;
+        }
+        setDays((prev) => prev.filter((day) => day.id !== id));
+    };
+
+    if (loading) {
+        return <p className={styles.status}>Loading your days…</p>;
+    }
+
+    if (days.length === 0) {
+        return <p className={styles.status}>No days logged yet — tap “+” to add your first meal.</p>;
+    }
 
     return (
         <div className={styles.groupsContainer}>
-            <h1>Groups</h1>
-            {days.length > 0 ? (
-                <div className={styles.contentContainer}>
-                    {days.map((day) => (
-                        <div key={day.id} className={styles.groupItem}>
-                            <h3>{day.date}</h3>
-                            {day.food_list && day.food_list.length > 0 ? (
-                                <ul className={styles.foodList}>
-                                    {day.food_list.map((item, index) => (
-                                        <li key={index} className={styles.foodItem}>
-                                            <h3>{item.name}</h3>
-                                            <ul>
-                                                {item.description.map((desc, descIndex) => (
-                                                    <li key={descIndex}>{desc}</li>
-                                                ))}
-                                            </ul>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>No food items available</p>
-                            )}
+            {days.map((day) => {
+                const foodList = Array.isArray(day.food_list) ? day.food_list : [];
+                const byMeal = foodList.reduce((acc, item) => {
+                    const meal = item.meal || 'Other';
+                    (acc[meal] = acc[meal] || []).push(item);
+                    return acc;
+                }, {});
+
+                const dayTotals = foodList.reduce(
+                    (acc, item) => {
+                        const macros = item.macros || {};
+                        const count = item.count || 1;
+                        acc.calories += (macros.calories || 0) * count;
+                        acc.fat += (macros.fat || 0) * count;
+                        acc.carbs += (macros.carbs || 0) * count;
+                        acc.protein += (macros.protein || 0) * count;
+                        return acc;
+                    },
+                    { calories: 0, fat: 0, carbs: 0, protein: 0 }
+                );
+
+                return (
+                    <div key={day.id} className={styles.groupCard}>
+                        <div className={styles.groupCardHeader}>
+                            <h3>{formatDate(day.date)}</h3>
+                            <button
+                                className={styles.deleteButton}
+                                onClick={() => handleDelete(day.id)}
+                                aria-label={`Delete ${day.date}`}
+                            >
+                                Delete
+                            </button>
                         </div>
-                    ))}
-                </div>
-            ) : (
-                <p>No groups available</p>
-            )}
+
+                        <div className={styles.dayTotals}>
+                            <span>{Math.round(dayTotals.calories)} kcal</span>
+                            <span>{Math.round(dayTotals.fat)}g fat</span>
+                            <span>{Math.round(dayTotals.carbs)}g carbs</span>
+                            <span>{Math.round(dayTotals.protein)}g protein</span>
+                        </div>
+
+                        {Object.keys(byMeal).length > 0 ? (
+                            Object.entries(byMeal).map(([meal, items]) => (
+                                <div key={meal} className={styles.mealBlock}>
+                                    <h4>{meal}</h4>
+                                    <ul className={styles.foodList}>
+                                        {items.map((item, index) => (
+                                            <li key={index} className={styles.foodItem}>
+                                                <span>{item.name}{item.count > 1 ? ` ×${item.count}` : ''}</span>
+                                                <span className={styles.foodCalories}>
+                                                    {Math.round((item.macros?.calories || 0) * (item.count || 1))} kcal
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))
+                        ) : (
+                            <p className={styles.status}>No food items available</p>
+                        )}
+                    </div>
+                );
+            })}
         </div>
     );
 }

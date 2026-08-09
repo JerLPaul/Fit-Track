@@ -1,35 +1,60 @@
-import { useState } from 'react';
-import styles from '../styles/Home.module.css';
+import { useContext } from 'react';
+import Link from 'next/link';
 import Layout from '../layouts/Default';
-import SearchList from '../components/SearchList/SearchList';
+import { UserContext } from '../utils/UserContext/UserContext';
+import styles from '../styles/Home.module.css';
+
+const FEATURES = [
+    {
+        title: 'Search any food',
+        description: 'Look up calories, fat, carbs and protein for thousands of foods in seconds.',
+        icon: '🔍',
+    },
+    {
+        title: 'Log full meals at once',
+        description: 'Build a meal from several foods, see the running totals, then save it in one go.',
+        icon: '🍽️',
+    },
+    {
+        title: 'See your history',
+        description: 'Every day you log is saved to your account and updates live as you add to it.',
+        icon: '📈',
+    },
+];
 
 export default function Home() {
-  const [ input, setInput ] = useState('');
+    const { user } = useContext(UserContext);
 
-  const handleChange = (e) => {
-    setInput(e.target.value);
-  }
+    return (
+        <Layout>
+            <section className={styles.hero}>
+                <div className={styles.heroContent}>
+                    <span className={styles.eyebrow}>Nutrition tracking, simplified</span>
+                    <h1 className={styles.title}>Know exactly what you're eating.</h1>
+                    <p className={styles.description}>
+                        Fit-Track makes it easy to search foods, log full meals, and keep a running
+                        history of your nutrition &mdash; without the clutter.
+                    </p>
+                    <div className={styles.heroActions}>
+                        <Link href={user ? '/dashboard' : '/login'} className={styles.primaryButton}>
+                            {user ? 'Go to dashboard' : 'Get started free'}
+                        </Link>
+                        <Link href="/search" className={styles.secondaryButton}>
+                            Try the food search
+                        </Link>
+                    </div>
+                </div>
+            </section>
 
-  return (
-    <div>
-    <Layout>
-        <div className={styles.container}>
-          <h1 className={styles.title}>
-            Fit-Track
-          </h1>
-
-          <p className={styles.description}>
-            Track your nutrition and fitness goals
-          </p>
-
-          <div className={styles.searchContainer}>
-            <input type="text" className={styles.searchBar} placeholder="Search..." value={input} onChange={handleChange}/>
-            <SearchList input={input}/>
-          </div>
-
-          
-        </div>
-    </Layout>
-    </div>
-  );
+            <section className={styles.features}>
+                {FEATURES.map((feature) => (
+                    <div key={feature.title} className={styles.featureCard}>
+                        <span className={styles.featureIcon}>{feature.icon}</span>
+                        <h3>{feature.title}</h3>
+                        <p>{feature.description}</p>
+                    </div>
+                ))}
+            </section>
+        </Layout>
+    );
 }

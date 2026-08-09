@@ -1,178 +1,189 @@
 import styles from "./AddPopup.module.css";
 import SearchList from "../SearchList/SearchList";
 import ListItem from "../ListItem/ListItem";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-export default function AddPopup({ onClose, onAdd }) {
+const MEALS = ["Breakfast", "Lunch", "Dinner", "Snack"];
+
+function todayISO() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+export default function AddPopup({ onClose, onAdd, defaultDate }) {
     const [input, setInput] = useState('');
-    const [dateInput, setDateInput] = useState('');
-    const [total, setTotal] = useState([0,0,0,0]);
+    const [dateInput, setDateInput] = useState(defaultDate || todayISO());
+    const [meal, setMeal] = useState(MEALS[0]);
     const [error, setError] = useState(null);
-    const [list, setList] = useState(new Map()); // Use Map for storing key-value pairs
-    const [expandedItem, setExpandedItem] = useState(null); // Track which item is expanded
+    const [saving, setSaving] = useState(false);
+    // Map<name, { description, count, meal }>
+    const [list, setList] = useState(new Map());
 
-    const toggleExpand = (index) => {
-        setExpandedItem((prev) => (prev === index ? null : index)); // Toggle expanded state
+    // Bug fix: totals used to be tracked in separate state that was mutated
+    // in place (`const newTotal = total; newTotal[0] += ...`), which is both
+    // a React anti-pattern (mutating state directly) and a source of subtly
+    // wrong totals when adds/removes interleaved. Totals are now always
+    // derived fresh from the selected list, so they can never drift.
+    const total = useMemo(() => {
+        const sums = { calories: 0, fat: 0, carbs: 0, protein: 0 };
+        for (const { description, count } of list.values()) {
+            sums.calories += description.macros.calories * count;
+            sums.fat += description.macros.fat * count;
+            sums.carbs += description.macros.carbs * count;
+            sums.protein += description.macros.protein * count;
+        }
+        return sums;
+    }, [list]);
+
+    const addToList = (name, description) => {
+        setList((prev) => {
+            const next = new Map(prev);
+            const existing = next.get(name);
+            if (existing) {
+                next.set(name, { ...existing, count: existing.count + 1 });
+            } else {
+                next.set(name, { description, count: 1, meal });
+            }
+            return next;
+        });
     };
 
-
-
-    const handleChange = (e) => {
-        setInput(e.target.value);
+    const setCount = (name, count) => {
+        setList((prev) => {
+            const next = new Map(prev);
+            const existing = next.get(name);
+            if (!existing) return prev;
+            if (count <= 0) {
+                next.delete(name);
+            } else {
+                next.set(name, { ...existing, count });
+            }
+            return next;
+        });
     };
 
-    const handleDateChange = (e) => {
-        setDateInput(e.target.value);
-    }
-
-    const handleAdd = () => {
-        // Convert Map to an array for passing to onAdd
+    const handleAdd = async () => {
         if (!dateInput) {
             setError("NO_DATE");
             return;
         }
+        if (list.size === 0) {
+            setError("NO_ITEMS");
+            return;
+        }
+        setError(null);
 
-        const listArray = Array.from(list.entries()).map(([name, description]) => ({ name, description }));
-        onAdd(dateInput, listArray, total);
-        onClose();
-    };
+        const listArray = Array.from(list.entries()).map(([name, { description, count, meal }]) => ({
+            name,
+            meal,
+            count,
+            serving: description.serving,
+            macros: description.macros,
+        }));
 
-    const addToList = (name, description) => {
-        console.log("Adding to list:", name, description);
-        setList((prevList) => {
-            const newList = new Map(prevList);
-
-            const newTotal = total;
-            newTotal[0] += description[1].match(/\d+/g) ? parseInt(description[1].match(/\d+/g)[0]) : 0; // Calories
-            newTotal[1] += description[2].match(/\d+/g) ? parseInt(description[2].match(/\d+/g)[0]) : 0; // Fat
-            newTotal[2] += description[3].match(/\d+/g) ? parseInt(description[3].match(/\d+/g)[0]) : 0; // Carbs
-            newTotal[3] += description[4].match(/\d+/g) ? parseInt(description[4].match(/\d+/g)[0]) : 0; // Protein
-            setTotal(newTotal);
-
-            if (newList.has(name)) {
-                // If the item already exists, increment the count
-                const existingDescription = newList.get(name);
-                existingDescription.count = (existingDescription.count || 1) + 1; // Increment count
-                newList.set(name, existingDescription);
-            } else {
-                // Add a new item with count initialized to 1
-                description.count = 1;
-                newList.set(name, description);
-            }
-    
-            return newList;
-        });
-    };
-
-    const removeFromList = (name) => {
-        setList((prevList) => {
-            const newList = new Map(prevList);
-
-            const newTotal = total.slice(); // Create a copy of the total array
-            const itemDescription = newList.get(name);
-            if (itemDescription) {
-                newTotal[0] -= itemDescription[1].match(/\d+/g) ? parseInt(itemDescription[1].match(/\d+/g)[0]) : 0; // Calories
-                newTotal[1] -= itemDescription[2].match(/\d+/g) ? parseInt(itemDescription[2].match(/\d+/g)[0]) : 0; // Fat
-                newTotal[2] -= itemDescription[3].match(/\d+/g) ? parseInt(itemDescription[3].match(/\d+/g)[0]) : 0; // Carbs
-                newTotal[3] -= itemDescription[4].match(/\d+/g) ? parseInt(itemDescription[4].match(/\d+/g)[0]) : 0; // Protein
-                setTotal(newTotal);
-            }
-
-            if (newList.get(name)?.count > 1) {
-                // If the item count is greater than 1, decrement the count
-                const existingDescription = newList.get(name);
-                existingDescription.count -= 1;
-                newList.set(name, existingDescription);
-            }
-            else {
-                // If the item count is 1, remove it from the list
-                newList.delete(name);
-            }
-
-            return newList;
-        });
+        setSaving(true);
+        try {
+            await onAdd(dateInput, listArray);
+            onClose();
+        } catch (err) {
+            setError("SAVE_FAILED");
+            setSaving(false);
+        }
     };
 
     return (
-        <div className={styles.popupOverlay}>
-            <div className={styles.closeButtonContainer}>
-                <button className={styles.closeButton} onClick={onClose}>
-                    X
-                </button>
-            </div>
-            <div className={styles.popupContent}>
-                <div className={styles.addContainer}>
-                    <div className={styles.dateRow}>
-                        <label htmlFor="dateInput" className={styles.dateLabel}>Date:</label>
+        <div className={styles.popupOverlay} onClick={onClose}>
+            <div className={styles.popupContent} onClick={(e) => e.stopPropagation()}>
+                <div className={styles.popupHeader}>
+                    <h2>Add foods</h2>
+                    <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+                        ×
+                    </button>
+                </div>
+
+                <div className={styles.metaRow}>
+                    <label className={styles.metaField}>
+                        <span>Date</span>
                         <input
                             type="date"
-                            id="dateInput"
-                            className={styles.dateInput}
                             value={dateInput}
-                            onChange={handleDateChange}
+                            onChange={(e) => setDateInput(e.target.value)}
                         />
-                        {error === "NO_DATE" && <p className={styles.error}>Please select a date</p>}
-                    </div>
+                    </label>
+                    <label className={styles.metaField}>
+                        <span>Meal</span>
+                        <select value={meal} onChange={(e) => setMeal(e.target.value)}>
+                            {MEALS.map((m) => (
+                                <option key={m} value={m}>{m}</option>
+                            ))}
+                        </select>
+                    </label>
+                </div>
+                {error === "NO_DATE" && <p className={styles.error}>Please select a date</p>}
 
-                    <h2>Add New Item</h2>
-                    <div className={styles.searchContainer}>
+                <div className={styles.body}>
+                    <div className={styles.searchColumn}>
                         <input
                             type="text"
                             className={styles.searchBar}
-                            placeholder="Search..."
+                            placeholder="Search foods to add…"
                             value={input}
-                            onChange={handleChange}
+                            onChange={(e) => setInput(e.target.value)}
+                            autoFocus
                         />
-                        <SearchList
-                            isAddable={true}
-                            onAdd={(name, description) => addToList(name, description)}
-                            input={input}
-                        />
+                        <div className={styles.searchResults}>
+                            <SearchList
+                                isAddable
+                                onAdd={addToList}
+                                input={input}
+                            />
+                        </div>
                     </div>
-                    <button className={styles.addButton} onClick={handleAdd}>
-                        Add
-                    </button>
-                </div>
-                {list.size > 0 ? ( 
-                    <div className={styles.selectedItemsSection}>
-                        <div className={styles.selectedItemsContainer}>
-                            {Array.from(list.entries()).map(([name, description], index) => (
-                                <div 
-                                    key={index} 
-                                    className={`${styles.listItemContainer} ${
-                                        expandedItem === index ? styles.expanded : ""
-                                    }`}
-                                    onClick={() => toggleExpand(index)} // Toggle expand on click
-                                >
-                                    
-                                    <button
-                                        className={styles.removeButton}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            removeFromList(name)
-                                        }} // Remove item by name
-                                    >
-                                        X
-                                    </button>
-                                    <ListItem name={name} description={description} />
+
+                    <div className={styles.selectedColumn}>
+                        <h3 className={styles.selectedHeading}>
+                            {meal} &middot; {list.size} {list.size === 1 ? 'item' : 'items'}
+                        </h3>
+
+                        {list.size > 0 ? (
+                            <>
+                                <div className={styles.selectedItems}>
+                                    {Array.from(list.entries()).map(([name, { description, count }]) => (
+                                        <div key={name} className={styles.selectedRow}>
+                                            <ListItem name={name} description={description} count={count} />
+                                            <div className={styles.stepper}>
+                                                <button onClick={() => setCount(name, count - 1)} aria-label={`Remove one ${name}`}>−</button>
+                                                <span>{count}</span>
+                                                <button onClick={() => setCount(name, count + 1)} aria-label={`Add one ${name}`}>+</button>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                        <div className={styles.totalContainer}>
-                            <h3>Total:</h3>
-                            <p>Calories: {total[0]}</p>
-                            <p>Fat: {total[1]}g</p>
-                            <p>Carbs: {total[2]}g</p>
-                            <p>Protein: {total[3]}g</p>
-                        </div>
+
+                                <div className={styles.totalCard}>
+                                    <h4>Total</h4>
+                                    <div className={styles.totalGrid}>
+                                        <span>{Math.round(total.calories)} kcal</span>
+                                        <span>{Math.round(total.fat)}g fat</span>
+                                        <span>{Math.round(total.carbs)}g carbs</span>
+                                        <span>{Math.round(total.protein)}g protein</span>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className={styles.emptyState}>
+                                <p>Search on the left and tap “Add” to build up this meal.</p>
+                            </div>
+                        )}
+
+                        {error === "NO_ITEMS" && <p className={styles.error}>Add at least one food first</p>}
+                        {error === "SAVE_FAILED" && <p className={styles.error}>Couldn't save — try again.</p>}
+
+                        <button className={styles.saveButton} onClick={handleAdd} disabled={saving}>
+                            {saving ? 'Saving…' : `Save ${meal.toLowerCase()}`}
+                        </button>
                     </div>
-                ) : (
-                    <div className={styles.noItemsContainer}>
-                        <p>No items selected</p>
-                    </div>
-                )}
+                </div>
             </div>
-            
         </div>
     );
 }
