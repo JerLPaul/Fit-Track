@@ -7,13 +7,10 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
-    "@vercel/kv": "^2.0.0",
     "classnames": "^2.5.1",
-    "http-proxy-middleware": "^3.0.5",
     "next": "latest",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-minimal-pie-chart": "^8.4.0"
+    "react-dom": "18.2.0"
   },
   "engines": {
     "node": ">=18"

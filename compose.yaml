@@ -1,25 +1,15 @@
 version: '3'
 services:
-  db:
-    image: postgres
-    environment:
-      POSTGRES_USER: your_username
-      POSTGRES_PASSWORD: your_password
-      POSTGRES_DB: your_database_name
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
   flask:
     build: ./flask
+    env_file:
+      - ./flask/.env
     ports:
       - 5000:5000
-    depends_on:
-      - db
 
   react:
     build: ./react
+    env_file:
+      - ./react/.env.local
     ports:
       - 3000:3000
-
-volumes:
-  db_data:
