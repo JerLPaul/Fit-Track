@@ -1,11 +1,4 @@
 // Same-origin proxy to the Flask nutrition service.
-//
-// Bug fix: the frontend used to call the Flask backend's absolute URL
-// (https://fit-track-backend.onrender.com) directly from the browser. That
-// hardcoded a single deployment, broke local/dev/docker-compose setups, and
-// depended on the backend's CORS config staying open. Routing through this
-// Next.js API route means the browser only ever talks to its own origin,
-// and the actual backend URL is just a server-side env var.
 const FLASK_API_URL = process.env.FLASK_API_URL;
 
 export default async function handler(req, res) {

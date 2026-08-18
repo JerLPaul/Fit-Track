@@ -31,3 +31,6 @@ react/.env.production.local
 **/__pycache__/
 **/.env
 **/instance/
+
+#docker
+**/.dockerignore

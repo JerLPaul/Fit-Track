@@ -1,0 +1,35 @@
+# Fly.io app configuration for the Fit-Track nutrition proxy.
+# Tuned for lowest cost: scale-to-zero, smallest machine, single region.
+# Replace `app` below with the name you choose in `fly apps create`.
+app = "fit-track-api"
+primary_region = "yyz"
+
+[build]
+
+[env]
+PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  # Scale to zero: the machine stops after a few minutes of no traffic and
+  # you're not billed for compute while it's stopped. Trade-off is a cold
+  # start (a few seconds) on the first request after idle time -- fine for
+  # an MVP with low/bursty traffic, not fine if you need consistent latency.
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/health"
+    protocol = "http"
+    timeout = "5s"
+
+[[vm]]
+  # Smallest available size. Flask + waitress comfortably fits in 256MB.
+  size = "shared-cpu-1x"
+  memory = "256mb"
