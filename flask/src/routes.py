@@ -43,13 +43,33 @@ def get_auth_token(force_refresh=False):
     }, timeout=10)
 
     if response.status_code != 200:
-        abort(502, message="Unable to authenticate with the nutrition provider")
+        details = _extract_provider_error(response)
+        abort(502, message=f"Unable to authenticate with the nutrition provider: {details}")
 
     payload = response.json()
     _token_cache["access_token"] = payload["access_token"]
     # Refresh a little early to avoid edge-of-expiry failures.
     _token_cache["expires_at"] = now + payload.get("expires_in", 3600) - 60
     return _token_cache["access_token"]
+
+
+def _extract_provider_error(response):
+    """Return a concise description of an upstream provider error payload.
+
+    Tries common JSON fields, otherwise falls back to a text snippet.
+    """
+    try:
+        payload = response.json()
+    except ValueError:
+        text = (response.text or "")[:200]
+        return f"status={response.status_code}, body={text}"
+
+    if isinstance(payload, dict):
+        for key in ("error", "error_description", "message", "messages", "errors", "code"):
+            if key in payload:
+                return f"status={response.status_code}, {key}={payload[key]}"
+
+    return f"status={response.status_code}, body={payload}"
 
 
 @nutrition_ns.route('/')
@@ -93,7 +113,8 @@ class Nutrition(Resource):
             )
 
         if response.status_code != 200:
-            abort(response.status_code, message="Failed to fetch nutrition data")
+            details = _extract_provider_error(response)
+            abort(response.status_code, message=f"Failed to fetch nutrition data: {details}")
 
         data = response.json()
 
