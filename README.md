@@ -75,7 +75,5 @@ The app is served at `http://localhost:3000`, the nutrition proxy at
 
 ## Notes
 
-* The Flask server can have a 20-50s cold-start delay on free hosting tiers
-  (e.g. Render) after periods of inactivity.
-* Passwords are handled entirely by Supabase Auth — Fit-Track's own code
-  never sees or stores a raw password.
+* The Flask server may have a 3s cold-start delay due to free hosting tiers after periods of inactivity.
+* Passwords are handled entirely by Supabase Auth — Fit-Track's own code never sees or stores a raw password.
