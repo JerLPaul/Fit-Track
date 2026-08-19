@@ -1,6 +1,7 @@
 import os
 import time
 import requests
+import xml.etree.ElementTree as ET
 from flask_restx import Resource, fields, reqparse, abort
 from src import app, api
 
@@ -61,15 +62,46 @@ def _extract_provider_error(response):
     try:
         payload = response.json()
     except ValueError:
-        text = (response.text or "")[:200]
+        text = (response.text or "")[:500]
+        code = getattr(response, "code", None)
+
+        try:
+            root = ET.fromstring(text)
+            code_text = root.findtext("code") or root.findtext("{http://platform.fatsecret.com/api/1.0/}code")
+            message_text = root.findtext("message") or root.findtext("{http://platform.fatsecret.com/api/1.0/}message")
+            if code_text or message_text:
+                return f"status={response.status_code}, code={code_text or code}, message={message_text or text}"
+        except ET.ParseError:
+            pass
+
+        if code is not None:
+            return f"status={response.status_code}, code={code}, body={text}"
+
         return f"status={response.status_code}, body={text}"
 
     if isinstance(payload, dict):
-        for key in ("error", "error_description", "message", "messages", "errors", "code"):
-            if key in payload:
-                return f"status={response.status_code}, {key}={payload[key]}"
+        error_code = None
+        error_obj = payload.get("error")
+        if isinstance(error_obj, dict):
+            error_code = error_obj.get("code") or error_obj.get("error_code")
 
-    return f"status={response.status_code}, body={payload}"
+        if error_code is None:
+            for key in ("error_code", "code", "errorCode"):
+                if key in payload:
+                    error_code = payload[key]
+                    break
+
+        for key in ("error", "error_description", "message", "messages", "errors"):
+            if key in payload:
+                msg = payload[key]
+                if error_code is not None:
+                    return f"status={response.status_code}, code={error_code}, {key}={msg}"
+                return f"status={response.status_code}, {key}={msg}"
+
+        if error_code is not None:
+            return f"status={response.status_code}, code={error_code}, body={payload}"
+
+    return f"status={response.status_code}, error= body={payload}"
 
 
 @nutrition_ns.route('/')
