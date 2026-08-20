@@ -5,32 +5,58 @@
     padding: var(--space-6) var(--space-4) var(--space-8);
 }
 
-.header {
+.dateNav {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-5);
+    justify-content: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
 }
 
-.header h1 {
-    margin: 0;
-    font-size: 1.6rem;
-}
-
-.addButtonInline {
-    background-color: var(--color-primary);
-    color: #ffffff;
-    border: none;
-    font-weight: 700;
-    font-size: 0.88rem;
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-pill);
+.dateNavButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-size: 1.3rem;
+    line-height: 1;
     cursor: pointer;
-    transition: background-color var(--transition);
+    flex-shrink: 0;
+    transition: border-color var(--transition), color var(--transition);
 }
 
-.addButtonInline:hover {
-    background-color: var(--color-primary-hover);
+.dateNavButton:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.dateNavButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.dateNavCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    position: relative;
+}
+
+.dateNavCenter h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.dateInput {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
 }
 
 .loadingText,

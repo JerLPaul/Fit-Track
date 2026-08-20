@@ -2,12 +2,9 @@ import styles from "./AddPopup.module.css";
 import SearchList from "../SearchList/SearchList";
 import ListItem from "../ListItem/ListItem";
 import { useMemo, useState } from "react";
+import { todayISO } from "../../utils/dateUtils/dateUtils";
 
 const MEALS = ["Breakfast", "Lunch", "Dinner", "Snack"];
-
-function todayISO() {
-    return new Date().toISOString().slice(0, 10);
-}
 
 export default function AddPopup({ onClose, onAdd, defaultDate }) {
     const [input, setInput] = useState('');
@@ -18,11 +15,7 @@ export default function AddPopup({ onClose, onAdd, defaultDate }) {
     // Map<name, { description, count, meal }>
     const [list, setList] = useState(new Map());
 
-    // Bug fix: totals used to be tracked in separate state that was mutated
-    // in place (`const newTotal = total; newTotal[0] += ...`), which is both
-    // a React anti-pattern (mutating state directly) and a source of subtly
-    // wrong totals when adds/removes interleaved. Totals are now always
-    // derived fresh from the selected list, so they can never drift.
+    
     const total = useMemo(() => {
         const sums = { calories: 0, fat: 0, carbs: 0, protein: 0 };
         for (const { description, count } of list.values()) {
@@ -77,7 +70,10 @@ export default function AddPopup({ onClose, onAdd, defaultDate }) {
             meal,
             count,
             serving: description.serving,
-            macros: description.macros,
+            calories: description.macros.calories,
+            fat: description.macros.fat,
+            carbs: description.macros.carbs,
+            protein: description.macros.protein,
         }));
 
         setSaving(true);

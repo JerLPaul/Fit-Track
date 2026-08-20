@@ -49,7 +49,8 @@ export default function Navbar() {
     const links = user
         ? [
               { href: '/dashboard', label: 'Dashboard' },
-              { href: '/days', label: 'My Days' },
+              { href: '/days', label: 'Diary' },
+              { href: '/progress', label: 'Progress' },
               { href: '/search', label: 'Search Foods' },
           ]
         : [
@@ -107,7 +108,10 @@ export default function Navbar() {
                                     Dashboard
                                 </Link>
                                 <Link href="/days" className={styles.dropdownItem} role="menuitem" onClick={() => setMenuOpen(false)}>
-                                    My Days
+                                    Diary
+                                </Link>
+                                <Link href="/progress" className={styles.dropdownItem} role="menuitem" onClick={() => setMenuOpen(false)}>
+                                    Progress
                                 </Link>
                                 <div className={styles.dropdownDivider} />
                                 <button className={styles.dropdownItemDanger} role="menuitem" onClick={handleSignOut}>

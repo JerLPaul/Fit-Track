@@ -1,5 +1,5 @@
 // Same-origin proxy to the Flask nutrition service.
-const FLASK_API_URL = process.env.FLASK_API_URL;
+const FLASK_API_URL = process.env.FLASK_API_URL
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {

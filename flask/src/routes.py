@@ -114,9 +114,6 @@ class Nutrition(Resource):
         search_expression = (args.get('name') or '').strip()
 
         if not search_expression:
-            # Bug fix: previously an empty search string was sent straight to
-            # FatSecret on every keystroke, wasting API calls and returning a
-            # confusing response. Just return an empty result set instead.
             return {"foods": {"food": []}}
 
         search_url = "https://platform.fatsecret.com/rest/server.api"

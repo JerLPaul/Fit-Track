@@ -1,61 +1,82 @@
 import Layout from '../layouts/Default';
 import styles from "../styles/Days.module.css"
-import Groups from "../components/Groups/Groups"
+import DiaryDay from "../components/DiaryDay/DiaryDay"
 import AddPopup from "../components/AddPopup/AddPopup"
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../utils/SupabaseClient/SupabaseClient";
 import useRequireAuth from "../utils/useRequireAuth/useRequireAuth";
+import { todayISO, addDays, formatDayLabel } from "../utils/dateUtils/dateUtils";
 
 export default function Days() {
     const { user, loading } = useRequireAuth();
+    const [selectedDate, setSelectedDate] = useState(todayISO());
+    const [entries, setEntries] = useState([]);
+    const [entriesLoading, setEntriesLoading] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
-    const [refreshKey, setRefreshKey] = useState(0);
-    const [saveError, setSaveError] = useState(null);
+    const [error, setError] = useState(null);
+
+    const fetchEntries = useCallback(async () => {
+        if (!user) return;
+        setEntriesLoading(true);
+        const { data, error } = await supabase
+            .from("food_entries")
+            .select("*")
+            .eq("user_id", user.id)
+            .eq("date", selectedDate)
+            .order("created_at", { ascending: true });
+
+        if (error) {
+            console.error("Error fetching food entries:", error.message);
+            setEntries([]);
+        } else {
+            setEntries(data ?? []);
+        }
+        setEntriesLoading(false);
+    }, [user, selectedDate]);
+
+    useEffect(() => {
+        fetchEntries();
+    }, [fetchEntries]);
+
+    // Live-update this day's entries as they change elsewhere (e.g. another tab).
+    useEffect(() => {
+        if (!user) return;
+        const channel = supabase
+            .channel(`food-entries-${user.id}-${selectedDate}`)
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "food_entries",
+                    filter: `user_id=eq.${user.id}`,
+                },
+                () => fetchEntries()
+            )
+            .subscribe();
+
+        return () => supabase.removeChannel(channel);
+    }, [user, selectedDate, fetchEntries]);
 
     const handleAdd = async (date, newItems) => {
-        // Bug fix: adding food used to always INSERT a brand new row, so
-        // logging more than one meal on the same day created several
-        // separate (and separately-rendered) "days" instead of one growing
-        // day. We now merge into the existing row for that date if there
-        // is one, which is also what makes "add another group of foods to
-        // today" a one-tap action instead of hunting for the right card.
-        const { data: existing, error: fetchError } = await supabase
-            .from("Day")
-            .select("id, food_list")
-            .eq("user_id", user.id)
-            .eq("date", date)
-            .maybeSingle();
-
-        if (fetchError) {
-            console.error("Error checking for existing day:", fetchError.message);
-            setSaveError(fetchError.message);
-            throw fetchError;
+        const rows = newItems.map((item) => ({ ...item, user_id: user.id, date }));
+        const { error } = await supabase.from("food_entries").insert(rows);
+        if (error) {
+            console.error("Error inserting food entries:", error.message);
+            setError(error.message);
+            throw error;
         }
+        setError(null);
+        if (date === selectedDate) fetchEntries();
+    };
 
-        if (existing) {
-            const mergedList = [...(existing.food_list || []), ...newItems];
-            const { error } = await supabase
-                .from("Day")
-                .update({ food_list: mergedList })
-                .eq("id", existing.id);
-            if (error) {
-                console.error("Error updating day:", error.message);
-                setSaveError(error.message);
-                throw error;
-            }
-        } else {
-            const { error } = await supabase
-                .from("Day")
-                .insert([{ user_id: user.id, date, food_list: newItems }]);
-            if (error) {
-                console.error("Error inserting day:", error.message);
-                setSaveError(error.message);
-                throw error;
-            }
+    const handleDelete = async (id) => {
+        const { error } = await supabase.from("food_entries").delete().eq("id", id);
+        if (error) {
+            console.error("Error deleting food entry:", error.message);
+            return;
         }
-
-        setSaveError(null);
-        setRefreshKey((k) => k + 1);
+        setEntries((prev) => prev.filter((e) => e.id !== id));
     };
 
     if (loading || !user) {
@@ -71,19 +92,39 @@ export default function Days() {
     return (
         <Layout>
             <div className={styles.mainContainer}>
-                <div className={styles.header}>
-                    <h1>My Days</h1>
-                    <button className={styles.addButtonInline} onClick={() => setIsVisible(true)}>
-                        + Add foods
+                <div className={styles.dateNav}>
+                    <button
+                        className={styles.dateNavButton}
+                        onClick={() => setSelectedDate((d) => addDays(d, -1))}
+                        aria-label="Previous day"
+                    >
+                        ‹
+                    </button>
+                    <div className={styles.dateNavCenter}>
+                        <h1>{formatDayLabel(selectedDate)}</h1>
+                        <input
+                            type="date"
+                            className={styles.dateInput}
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        className={styles.dateNavButton}
+                        onClick={() => setSelectedDate((d) => addDays(d, 1))}
+                        aria-label="Next day"
+                        disabled={selectedDate >= todayISO()}
+                    >
+                        ›
                     </button>
                 </div>
 
-                {saveError && <p className={styles.error}>Couldn't save: {saveError}</p>}
+                {error && <p className={styles.error}>Couldn't save: {error}</p>}
 
-                <Groups refreshKey={refreshKey} />
+                <DiaryDay entries={entries} loading={entriesLoading} onDelete={handleDelete} />
 
                 {isVisible && (
-                    <AddPopup onClose={() => setIsVisible(false)} onAdd={handleAdd} />
+                    <AddPopup onClose={() => setIsVisible(false)} onAdd={handleAdd} defaultDate={selectedDate} />
                 )}
 
                 <div className={styles.buttonContainer}>
