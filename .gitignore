@@ -34,3 +34,6 @@ react/.env.production.local
 
 #docker
 **/.dockerignore
+
+supabase
+
